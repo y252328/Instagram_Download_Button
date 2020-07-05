@@ -2,9 +2,9 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.1.0
+// @version             1.1.1
 // @description         Add download button to download media in the post and the story in Instagram
-// @description:zh-TW   在Instagram頁面加入下載按鈕，可下載貼文及限時動態
+// @description:zh-TW   在Instagram頁面加入下載按鈕，透過此按鈕可以下載貼文及限時動態
 // @author              ZhiYu
 // @match               https://www.instagram.com/*
 // @grant               none
