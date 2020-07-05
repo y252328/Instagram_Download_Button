@@ -2,7 +2,7 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.0.0
+// @version             1.1.0
 // @description         Add download button to download media in the post and the story in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕，可下載貼文及限時動態
 // @author              ZhiYu
@@ -39,18 +39,25 @@
 </svg>
 `;
     var checkExistTimer = setInterval(function() {
+        let lang = document.getElementsByTagName("html")[0].getAttribute('lang');
+        let sharePost = "Share Post";
+        let menu = "Menu";
+        if (lang === "zh-tw") {
+            menu = "功能表";
+            sharePost = "分享貼文";
+        }
         // check story
         if (document.getElementsByClassName("story-dl-btn").length == 0) {
-            if(document.querySelector('span[aria-label="功能表"]')) {
-                addDownloadBtn(document.querySelector('span[aria-label="功能表"]'), "story-dl-btn", "white");
+            if(document.querySelector('span[aria-label="' + menu + '"]')) {
+                addDownloadBtn(document.querySelector('span[aria-label="' + menu + '"]'), "story-dl-btn", "white");
             }
         }
 
         // check post
         let articleList = document.querySelectorAll("article");
         for( let i = 0 ; i < articleList.length ; i ++ ) {
-            if(articleList[i].querySelector('svg[aria-label="分享貼文"]') && articleList[i].getElementsByClassName("post-dl-btn").length == 0) {
-                addDownloadBtn(articleList[i].querySelector('svg[aria-label="分享貼文"]'), 'post-dl-btn', "black");
+            if(articleList[i].querySelector('svg[aria-label="' + sharePost + '"]') && articleList[i].getElementsByClassName("post-dl-btn").length == 0) {
+                addDownloadBtn(articleList[i].querySelector('svg[aria-label="' + sharePost + '"]'), 'post-dl-btn', "black");
             }
         }
 
