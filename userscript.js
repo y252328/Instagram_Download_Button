@@ -2,7 +2,7 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.2.0
+// @version             1.2.1
 // @description         Add download button and open button to download or open media in the posts, stories and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟貼文、限時動態及Highlight
 // @author              ZhiYu
@@ -79,7 +79,7 @@
         newtabBtn.setAttribute("title", "open in new tab");
         newtabBtn.setAttribute("style", "cursor: pointer;margin-left: 16px;margin-top: 8px;");
         newtabBtn.onclick = function() {
-            dlnewtabBtnClicked(newtabBtn);
+            customBtnClicked(newtabBtn);
         }
         node.parentNode.parentNode.appendChild(newtabBtn);
 
@@ -90,12 +90,12 @@
         downloadBtn.setAttribute("title", "download");
         downloadBtn.setAttribute("style", "cursor: pointer;margin-left: 14px;margin-top: 8px;");
         downloadBtn.onclick = function() {
-            dlBtnClicked(downloadBtn);
+            customBtnClicked(downloadBtn);
         }
         node.parentNode.parentNode.appendChild(downloadBtn);
     }
 
-    function dlBtnClicked(target) {
+    function customBtnClicked(target) {
         // handle download button click
         if (window.location.pathname.includes('stories')) {
             handleStory(target);
@@ -105,7 +105,7 @@
     }
 
     function handlePost(target) {
-        // extract url from target post and download it
+        // extract url from target post and download or open it
         let articleNode = target;
         while(articleNode && articleNode.tagName !== "ARTICLE") {
             articleNode = articleNode.parentNode;
@@ -142,33 +142,36 @@
             }
         }
 
+        // ==============================
+        // = download or open media url =
+        // ==============================
         if(url.length > 0) {
             // check url
             if (target.getAttribute("class").includes("download-btn")) {
-                // ==================================
-                // = generate filename and download =
-                // ==================================
+                // generate filename 
                 // add time to filename
                 let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'))
                 filename = datetime.yyyymmdd() + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
-
                 // add poster name to filename
                 let posterName = articleNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
                 filename = posterName + '-' + filename;
 
+                // download
                 downloadResource(url, filename);
             } else {
-                // =======================
-                // = open url in new tab =
-                // =======================
+                // open url in new tab
                 openResource(url);
             }
         }
     }
 
     function handleStory(target) {
-        // extract url from target story and download it
+        // extract url from target story and download or open it
         let url = ""
+        
+        // =====================
+        // = extract media url =
+        // =====================
         if(document.querySelector('video > source')) {
             url = document.querySelector('video > source').getAttribute('src');
         } else if(document.querySelector('img[decoding="sync"]')){
@@ -176,16 +179,24 @@
         }
         let filename = url.split('?')[0].split('\\').pop().split('/').pop();
 
-        // add time to filename
-        let datetime = new Date(document.querySelector('time').getAttribute('datetime'))
-        filename = datetime.yyyymmdd() + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
+        // ==============================
+        // = download or open media url =
+        // ==============================
+        if (target.getAttribute("class").includes("download-btn")) {
+            // generate filename 
+            // add time to filename
+            let datetime = new Date(document.querySelector('time').getAttribute('datetime'))
+            filename = datetime.yyyymmdd() + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
+            // add poster name to filename
+            let posterName = document.querySelector('header a').getAttribute('href').replace(/\//g, '');
+            filename = posterName + '-' + filename;
 
-
-        // add poster name to filename
-        let posterName = document.querySelector('header a').getAttribute('href').replace(/\//g, '');
-        filename = posterName + '-' + filename;
-        downloadResource(url, filename);
-        console.log(filename);
+            // download
+            downloadResource(url, filename);
+        } else {
+            // open url in new tab
+            openResource(url);
+        }
     }
 
     function openResource(url) {
