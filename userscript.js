@@ -2,30 +2,33 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.2.1
+// @version             1.3.0
+// @compatible          chrome
+// @compatible          firefox
+// @compatible          edge
 // @description         Add download button and open button to download or open media in the posts, stories and highlights in Instagram
-// @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟貼文、限時動態及Highlight
+// @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟貼文、限時動態及Highlight中的照片或影片
 // @author              ZhiYu
 // @match               https://www.instagram.com/*
 // @grant               none
 // @license             MIT
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
-    Date.prototype.yyyymmdd = function() {
+    Date.prototype.yyyymmdd = function () {
         // ref: https://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object?page=1&tab=votes#tab-top
         var mm = this.getMonth() + 1; // getMonth() is zero-based
         var dd = this.getDate();
 
         return [this.getFullYear(),
-                (mm>9 ? '' : '0') + mm,
-                (dd>9 ? '' : '0') + dd
-               ].join('');
+        (mm > 9 ? '' : '0') + mm,
+        (dd > 9 ? '' : '0') + dd
+        ].join('');
     };
 
     var svgDownloadBtn =
-`<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="24" width="24"
+        `<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="24" width="24"
 	 viewBox="0 0 477.867 477.867" style="fill:%color;" xml:space="preserve">
 	<g>
 		<path d="M443.733,307.2c-9.426,0-17.067,7.641-17.067,17.067v102.4c0,9.426-7.641,17.067-17.067,17.067H68.267
@@ -40,31 +43,29 @@
 	</g>
 </svg>`;
 
-    var svgNewtabBtn = 
-`<svg id="Capa_1" style="fill:%color;" viewBox="0 0 482.239 482.239" xmlns="http://www.w3.org/2000/svg" height="24" width="24">
+    var svgNewtabBtn =
+        `<svg id="Capa_1" style="fill:%color;" viewBox="0 0 482.239 482.239" xmlns="http://www.w3.org/2000/svg" height="24" width="24">
     <path d="m465.016 0h-344.456c-9.52 0-17.223 7.703-17.223 17.223v86.114h-86.114c-9.52 0-17.223 7.703-17.223 17.223v344.456c0 9.52 7.703 17.223 17.223 17.223h344.456c9.52 0 17.223-7.703 17.223-17.223v-86.114h86.114c9.52 0 17.223-7.703 17.223-17.223v-344.456c0-9.52-7.703-17.223-17.223-17.223zm-120.56 447.793h-310.01v-310.01h310.011v310.01zm103.337-103.337h-68.891v-223.896c0-9.52-7.703-17.223-17.223-17.223h-223.896v-68.891h310.011v310.01z"/>
 </svg>`;
 
-    var checkExistTimer = setInterval(function() {
+    var checkExistTimer = setInterval(function () {
         let lang = document.getElementsByTagName("html")[0].getAttribute('lang');
-        let sharePost = "Share Post";
-        let menu = "Menu";
-        if (lang === "zh-tw") {
-            menu = "功能表";
-            sharePost = "分享貼文";
-        }
+        let sharePostSelector = "Share Post";
+        let menuSeletor = "header button > span";
+
         // check story
         if (document.getElementsByClassName("custom-btn").length == 0) {
-            if(document.querySelector('span[aria-label="' + menu + '"]')) {
-                addCustomBtn(document.querySelector('span[aria-label="' + menu + '"]'), "white");
+            if (document.querySelector(menuSeletor)) {
+                addCustomBtn(document.querySelector(menuSeletor), "white");
             }
         }
 
         // check post
         let articleList = document.querySelectorAll("article");
-        for( let i = 0 ; i < articleList.length ; i ++ ) {
-            if(articleList[i].querySelector('svg[aria-label="' + sharePost + '"]') && articleList[i].getElementsByClassName("custom-btn").length == 0) {
-                addCustomBtn(articleList[i].querySelector('svg[aria-label="' + sharePost + '"]'), "black");
+        for (let i = 0; i < articleList.length; i++) {
+            if (articleList[i].querySelector(sharePostSelector) &&
+                articleList[i].getElementsByClassName("custom-btn").length == 0) {
+                addCustomBtn(articleList[i].querySelector(sharePostSelector), "black");
             }
         }
 
@@ -74,22 +75,22 @@
         // add download button to post or story page and set onclick handler
         // add newtab button
         let newtabBtn = document.createElement("span");
-        newtabBtn.innerHTML = svgNewtabBtn.replace('%color',iconColor);
+        newtabBtn.innerHTML = svgNewtabBtn.replace('%color', iconColor);
         newtabBtn.setAttribute("class", "custom-btn newtab-btn");
         newtabBtn.setAttribute("title", "open in new tab");
         newtabBtn.setAttribute("style", "cursor: pointer;margin-left: 16px;margin-top: 8px;");
-        newtabBtn.onclick = function() {
+        newtabBtn.onclick = function () {
             customBtnClicked(newtabBtn);
         }
         node.parentNode.parentNode.appendChild(newtabBtn);
 
         // add download button
         let downloadBtn = document.createElement("span");
-        downloadBtn.innerHTML = svgDownloadBtn.replace('%color',iconColor);
+        downloadBtn.innerHTML = svgDownloadBtn.replace('%color', iconColor);
         downloadBtn.setAttribute("class", "custom-btn download-btn");
         downloadBtn.setAttribute("title", "download");
         downloadBtn.setAttribute("style", "cursor: pointer;margin-left: 14px;margin-top: 8px;");
-        downloadBtn.onclick = function() {
+        downloadBtn.onclick = function () {
             customBtnClicked(downloadBtn);
         }
         node.parentNode.parentNode.appendChild(downloadBtn);
@@ -107,7 +108,7 @@
     function handlePost(target) {
         // extract url from target post and download or open it
         let articleNode = target;
-        while(articleNode && articleNode.tagName !== "ARTICLE") {
+        while (articleNode && articleNode.tagName !== "ARTICLE") {
             articleNode = articleNode.parentNode;
         }
         let list = articleNode.querySelectorAll('li[style][class]');
@@ -119,9 +120,9 @@
         // =====================
         if (list.length == 0) {
             // single img or video
-            if(document.querySelector('article  div > video')){
+            if (document.querySelector('article  div > video')) {
                 url = document.querySelector('article  div > video').getAttribute('src');
-            } else if(document.querySelector('article  div[role] div > img')){
+            } else if (document.querySelector('article  div[role] div > img')) {
                 url = document.querySelector('article  div[role] div > img').getAttribute('src');
             }
         } else {
@@ -131,13 +132,13 @@
             if (!document.querySelector('.coreSpriteLeftChevron')) {
                 idx = 0;
             } else if (!document.querySelector('.coreSpriteRightChevron')) {
-                idx = list.length-1;
+                idx = list.length - 1;
             } else idx = 1;
 
             let node = list[idx];
-            if(node.querySelector('video')) {
+            if (node.querySelector('video')) {
                 url = node.querySelector('video').getAttribute('src');
-            } else if(node.querySelector('img')) {
+            } else if (node.querySelector('img')) {
                 url = node.querySelector('img').getAttribute('src');
             }
         }
@@ -145,7 +146,7 @@
         // ==============================
         // = download or open media url =
         // ==============================
-        if(url.length > 0) {
+        if (url.length > 0) {
             // check url
             if (target.getAttribute("class").includes("download-btn")) {
                 // generate filename 
@@ -168,13 +169,13 @@
     function handleStory(target) {
         // extract url from target story and download or open it
         let url = ""
-        
+
         // =====================
         // = extract media url =
         // =====================
-        if(document.querySelector('video > source')) {
+        if (document.querySelector('video > source')) {
             url = document.querySelector('video > source').getAttribute('src');
-        } else if(document.querySelector('img[decoding="sync"]')){
+        } else if (document.querySelector('img[decoding="sync"]')) {
             url = document.querySelector('img[decoding="sync"]').getAttribute('src');
         }
         let filename = url.split('?')[0].split('\\').pop().split('/').pop();
@@ -232,9 +233,9 @@
         })
             .then(response => response.blob())
             .then(blob => {
-            let blobUrl = window.URL.createObjectURL(blob);
-            forceDownload(blobUrl, filename);
-        })
+                let blobUrl = window.URL.createObjectURL(blob);
+                forceDownload(blobUrl, filename);
+            })
             .catch(e => console.error(e));
     }
 })();
