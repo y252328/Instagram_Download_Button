@@ -2,7 +2,7 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.3.0
+// @version             1.3.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -54,7 +54,7 @@
         let menuSeletor = "header button > span";
 
         // check story
-        if (document.getElementsByClassName("custom-btn").length == 0) {
+        if (document.getElementsByClassName("custom-btn").length === 0) {
             if (document.querySelector(menuSeletor)) {
                 addCustomBtn(document.querySelector(menuSeletor), "white");
             }
@@ -64,7 +64,7 @@
         let articleList = document.querySelectorAll("article");
         for (let i = 0; i < articleList.length; i++) {
             if (articleList[i].querySelector(sharePostSelector) &&
-                articleList[i].getElementsByClassName("custom-btn").length == 0) {
+                articleList[i].getElementsByClassName("custom-btn").length === 0) {
                 addCustomBtn(articleList[i].querySelector(sharePostSelector), "black");
             }
         }
