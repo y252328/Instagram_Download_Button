@@ -16,12 +16,12 @@
 
 (function () {
     'use strict';
-    Date.prototype.yyyymmdd = function () {
+    function yyyymmdd(date) {
         // ref: https://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object?page=1&tab=votes#tab-top
-        var mm = this.getMonth() + 1; // getMonth() is zero-based
-        var dd = this.getDate();
+        var mm = date.getMonth() + 1; // getMonth() is zero-based
+        var dd = date.getDate();
 
-        return [this.getFullYear(),
+        return [date.getFullYear(),
         (mm > 9 ? '' : '0') + mm,
         (dd > 9 ? '' : '0') + dd
         ].join('');
@@ -50,7 +50,7 @@
 
     var checkExistTimer = setInterval(function () {
         let lang = document.getElementsByTagName("html")[0].getAttribute('lang');
-        let sharePostSelector = "Share Post";
+        let sharePostSelector = "section > button > svg";
         let menuSeletor = "header button > span";
 
         // check story
@@ -152,7 +152,7 @@
                 // generate filename 
                 // add time to filename
                 let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'))
-                filename = datetime.yyyymmdd() + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
+                filename = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
                 // add poster name to filename
                 let posterName = articleNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
                 filename = posterName + '-' + filename;
@@ -187,7 +187,7 @@
             // generate filename 
             // add time to filename
             let datetime = new Date(document.querySelector('time').getAttribute('datetime'))
-            filename = datetime.yyyymmdd() + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
+            filename = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
             // add poster name to filename
             let posterName = document.querySelector('header a').getAttribute('href').replace(/\//g, '');
             filename = posterName + '-' + filename;
