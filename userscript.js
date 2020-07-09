@@ -2,7 +2,7 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.3.1
+// @version             1.3.2
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -25,7 +25,7 @@
         (mm > 9 ? '' : '0') + mm,
         (dd > 9 ? '' : '0') + dd
         ].join('');
-    };
+    }
 
     var svgDownloadBtn =
         `<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="24" width="24"
@@ -81,7 +81,7 @@
         newtabBtn.setAttribute("style", "cursor: pointer;margin-left: 16px;margin-top: 8px;");
         newtabBtn.onclick = function () {
             customBtnClicked(newtabBtn);
-        }
+        };
         node.parentNode.parentNode.appendChild(newtabBtn);
 
         // add download button
@@ -92,7 +92,7 @@
         downloadBtn.setAttribute("style", "cursor: pointer;margin-left: 14px;margin-top: 8px;");
         downloadBtn.onclick = function () {
             customBtnClicked(downloadBtn);
-        }
+        };
         node.parentNode.parentNode.appendChild(downloadBtn);
     }
 
@@ -118,7 +118,7 @@
         // =====================
         // = extract media url =
         // =====================
-        if (list.length == 0) {
+        if (list.length === 0) {
             // single img or video
             if (document.querySelector('article  div > video')) {
                 url = document.querySelector('article  div > video').getAttribute('src');
@@ -151,7 +151,7 @@
             if (target.getAttribute("class").includes("download-btn")) {
                 // generate filename 
                 // add time to filename
-                let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'))
+                let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
                 filename = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
                 // add poster name to filename
                 let posterName = articleNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
@@ -168,7 +168,7 @@
 
     function handleStory(target) {
         // extract url from target story and download or open it
-        let url = ""
+        let url = "";
 
         // =====================
         // = extract media url =
@@ -186,7 +186,7 @@
         if (target.getAttribute("class").includes("download-btn")) {
             // generate filename 
             // add time to filename
-            let datetime = new Date(document.querySelector('time').getAttribute('datetime'))
+            let datetime = new Date(document.querySelector('time').getAttribute('datetime'));
             filename = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
             // add poster name to filename
             let posterName = document.querySelector('header a').getAttribute('href').replace(/\//g, '');
