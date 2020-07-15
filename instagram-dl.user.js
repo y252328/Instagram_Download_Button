@@ -5,6 +5,7 @@
 // @version             1.3.3
 // @compatible          chrome
 // @compatible          firefox
+// @compatible          opera
 // @compatible          edge
 // @description         Add download button and open button to download or open media in the posts, stories and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟貼文、限時動態及Highlight中的照片或影片
