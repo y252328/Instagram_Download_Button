@@ -2,7 +2,7 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.3.2
+// @version             1.3.3
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -50,7 +50,7 @@
 
     var checkExistTimer = setInterval(function () {
         let lang = document.getElementsByTagName("html")[0].getAttribute('lang');
-        let sharePostSelector = "section > button > svg";
+        let sharePostSelector = "section > button > div";
         let menuSeletor = "header button > span";
 
         // check story
