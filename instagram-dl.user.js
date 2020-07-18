@@ -2,7 +2,7 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.4.0
+// @version             1.4.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          opera
@@ -53,12 +53,12 @@
         let lang = document.getElementsByTagName("html")[0].getAttribute('lang');
         let sharePostSelector = "section > button > div";
         let menuSeletor = "header button > span";
-        let profileSelector = "header section svg"
+        let profileSelector = "header section svg";
 
         // check story
         if (document.getElementsByClassName("custom-btn").length === 0) {
             if (document.querySelector(menuSeletor)) {
-                addCustomBtn(document.querySelector(menuSeletor), "white");
+                addCustomBtn(document.querySelector(menuSeletor), "white", append2Post);
             }
         }
 
@@ -67,58 +67,54 @@
         for (let i = 0; i < articleList.length; i++) {
             if (articleList[i].querySelector(sharePostSelector) &&
                 articleList[i].getElementsByClassName("custom-btn").length === 0) {
-                addCustomBtn(articleList[i].querySelector(sharePostSelector), "black");
+                addCustomBtn(articleList[i].querySelector(sharePostSelector), "black", append2Post);
             }
         }
 
         // check profile
         if (document.getElementsByClassName("custom-btn").length === 0) {
             if (document.querySelector(profileSelector)) {
-                addBtn2Header(document.querySelector(profileSelector));
+                addCustomBtn(document.querySelector(profileSelector), "black", append2Header);
             }
         }
     }, 500);
-    
-    function createCustomBtn(svg, iconColor, className, marginLeft) {
-        let newtabBtn = document.createElement("span");
-        newtabBtn.innerHTML = svg.replace('%color', iconColor);
-        newtabBtn.setAttribute("class", "custom-btn " + className);
-        newtabBtn.setAttribute("title", "open in new tab");
-        newtabBtn.setAttribute("style", "cursor: pointer;margin-left: " + marginLeft + ";margin-top: 8px;");
-        return newtabBtn;
+
+    function append2Header(node, btn) {
+        node.parentNode.parentNode.parentNode.insertBefore(btn, node.parentNode.parentNode);
     }
 
-    function addBtn2Header(node) {
-        // add download button to profile header and set onclick handler
-        // add newtab button
-        let newtabBtn = createCustomBtn(svgNewtabBtn, "black", "newtab-btn profile", "16px");
-        newtabBtn.onclick = () => {customBtnClicked(newtabBtn);};
-        node.parentNode.parentNode.parentNode.insertBefore(newtabBtn, node.parentNode.parentNode);
-
-        // add download button
-        let downloadBtn = createCustomBtn(svgDownloadBtn, "black", "download-btn profile", "14px");
-        downloadBtn.onclick = () => {customBtnClicked(downloadBtn);};
-        node.parentNode.parentNode.parentNode.insertBefore(downloadBtn, node.parentNode.parentNode);
+    function append2Post(node, btn) {
+        node.parentNode.parentNode.appendChild(btn);
     }
 
-    function addCustomBtn(node, iconColor) {
-        // add download button to post or story page and set onclick handler
+    function addCustomBtn(node, iconColor, appendNode) {
+        // add download button and set onclick handler
         // add newtab button
         let newtabBtn = createCustomBtn(svgNewtabBtn, iconColor, "newtab-btn", "16px");
-        newtabBtn.onclick = () => {customBtnClicked(newtabBtn);};
-        node.parentNode.parentNode.appendChild(newtabBtn);
+        appendNode(node, newtabBtn);
 
         // add download button
         let downloadBtn = createCustomBtn(svgDownloadBtn, iconColor, "download-btn", "14px");
-        downloadBtn.onclick = () => {customBtnClicked(downloadBtn);};
-        node.parentNode.parentNode.appendChild(downloadBtn);
+        appendNode(node, downloadBtn);
     }
 
-    function customBtnClicked(target) {
-        // handle download button click
+    function createCustomBtn(svg, iconColor, className, marginLeft) {
+        let newBtn = document.createElement("span");
+        newBtn.innerHTML = svg.replace('%color', iconColor);
+        newBtn.setAttribute("class", "custom-btn " + className);
+        newBtn.setAttribute("title", "open in new tab");
+        newBtn.setAttribute("style", "cursor: pointer;margin-left: " + marginLeft + ";margin-top: 8px;");
+        newBtn.onclick = customBtnClicked;
+        return newBtn;
+    }
+
+    function customBtnClicked(e) {
+        // handle button click
+        let target = e.currentTarget;
         if (window.location.pathname.includes('stories')) {
             handleStory(target);
-        } else if (target.getAttribute('class').includes('profile')) {
+        } else if (document.querySelector('header') && 
+                   document.querySelector('header').contains(target)) {
             handleProfile(target);
         } else {
             handlePost(target);
@@ -127,9 +123,9 @@
 
     function handleProfile(target) {
         // extract profile picture url and download or open it
-        let img = document.querySelector('header img')
-        let url = img.getAttribute('src')
-        let filename = '.png'
+        let img = document.querySelector('header img');
+        let url = img.getAttribute('src');
+        let filename = '.png';
 
         if (url.length > 0) {
             // check url
