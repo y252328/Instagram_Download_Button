@@ -1,10 +1,12 @@
 # Instagram Download Button
 [Github](https://github.com/y252328/Instagram_Download_Button), [Greasy Fork](https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button), [OpenUserJS](https://openuserjs.org/scripts/y252328/Instagram_Download_Button)
 
-This repository is a Javascript for Greasemonkey/Tampermonkey. This script will add a download button and open button to your Instagram and you can download or open media in the posts, stories and highlights by one click.
+This repository is a Javascript for Greasemonkey/Tampermonkey. This script will add a download button and open button to your Instagram and you can download or open profile picture and media in the posts, stories and highlights by one click.
 
 > Note: This script only test on Google Chrome, Firefox, Edge and Opera with Tampermonkey.
 
+<img src="img/profile.png" alt="drawing" width="436" height="134"/>
+<br/>
 <img src="img/post.png" alt="drawing" width="467" height="294"/>
 <br/>
 <img src="img/story&highlight.png" alt="drawing" width="216" height="376"/>
