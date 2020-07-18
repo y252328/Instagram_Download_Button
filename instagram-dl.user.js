@@ -2,7 +2,7 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.3.3
+// @version             1.4.0
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          opera
@@ -53,6 +53,7 @@
         let lang = document.getElementsByTagName("html")[0].getAttribute('lang');
         let sharePostSelector = "section > button > div";
         let menuSeletor = "header button > span";
+        let profileSelector = "header section svg"
 
         // check story
         if (document.getElementsByClassName("custom-btn").length === 0) {
@@ -70,30 +71,46 @@
             }
         }
 
+        // check profile
+        if (document.getElementsByClassName("custom-btn").length === 0) {
+            if (document.querySelector(profileSelector)) {
+                addBtn2Header(document.querySelector(profileSelector));
+            }
+        }
     }, 500);
+    
+    function createCustomBtn(svg, iconColor, className, marginLeft) {
+        let newtabBtn = document.createElement("span");
+        newtabBtn.innerHTML = svg.replace('%color', iconColor);
+        newtabBtn.setAttribute("class", "custom-btn " + className);
+        newtabBtn.setAttribute("title", "open in new tab");
+        newtabBtn.setAttribute("style", "cursor: pointer;margin-left: " + marginLeft + ";margin-top: 8px;");
+        return newtabBtn;
+    }
+
+    function addBtn2Header(node) {
+        // add download button to profile header and set onclick handler
+        // add newtab button
+        let newtabBtn = createCustomBtn(svgNewtabBtn, "black", "newtab-btn profile", "16px");
+        newtabBtn.onclick = () => {customBtnClicked(newtabBtn);};
+        node.parentNode.parentNode.parentNode.insertBefore(newtabBtn, node.parentNode.parentNode);
+
+        // add download button
+        let downloadBtn = createCustomBtn(svgDownloadBtn, "black", "download-btn profile", "14px");
+        downloadBtn.onclick = () => {customBtnClicked(downloadBtn);};
+        node.parentNode.parentNode.parentNode.insertBefore(downloadBtn, node.parentNode.parentNode);
+    }
 
     function addCustomBtn(node, iconColor) {
         // add download button to post or story page and set onclick handler
         // add newtab button
-        let newtabBtn = document.createElement("span");
-        newtabBtn.innerHTML = svgNewtabBtn.replace('%color', iconColor);
-        newtabBtn.setAttribute("class", "custom-btn newtab-btn");
-        newtabBtn.setAttribute("title", "open in new tab");
-        newtabBtn.setAttribute("style", "cursor: pointer;margin-left: 16px;margin-top: 8px;");
-        newtabBtn.onclick = function () {
-            customBtnClicked(newtabBtn);
-        };
+        let newtabBtn = createCustomBtn(svgNewtabBtn, iconColor, "newtab-btn", "16px");
+        newtabBtn.onclick = () => {customBtnClicked(newtabBtn);};
         node.parentNode.parentNode.appendChild(newtabBtn);
 
         // add download button
-        let downloadBtn = document.createElement("span");
-        downloadBtn.innerHTML = svgDownloadBtn.replace('%color', iconColor);
-        downloadBtn.setAttribute("class", "custom-btn download-btn");
-        downloadBtn.setAttribute("title", "download");
-        downloadBtn.setAttribute("style", "cursor: pointer;margin-left: 14px;margin-top: 8px;");
-        downloadBtn.onclick = function () {
-            customBtnClicked(downloadBtn);
-        };
+        let downloadBtn = createCustomBtn(svgDownloadBtn, iconColor, "download-btn", "14px");
+        downloadBtn.onclick = () => {customBtnClicked(downloadBtn);};
         node.parentNode.parentNode.appendChild(downloadBtn);
     }
 
@@ -101,8 +118,33 @@
         // handle download button click
         if (window.location.pathname.includes('stories')) {
             handleStory(target);
+        } else if (target.getAttribute('class').includes('profile')) {
+            handleProfile(target);
         } else {
             handlePost(target);
+        }
+    }
+
+    function handleProfile(target) {
+        // extract profile picture url and download or open it
+        let img = document.querySelector('header img')
+        let url = img.getAttribute('src')
+        let filename = '.png'
+
+        if (url.length > 0) {
+            // check url
+            if (target.getAttribute("class").includes("download-btn")) {
+                // generate filename 
+                // add poster name to filename
+                let posterName = document.querySelector('header h1').textContent;
+                filename = posterName + filename;
+
+                // download
+                downloadResource(url, filename);
+            } else {
+                // open url in new tab
+                openResource(url);
+            }
         }
     }
 
