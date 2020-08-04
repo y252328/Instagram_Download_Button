@@ -2,7 +2,7 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.4.1
+// @version             1.4.2
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          opera
@@ -159,18 +159,20 @@
         // =====================
         if (list.length === 0) {
             // single img or video
-            if (document.querySelector('article  div > video')) {
-                url = document.querySelector('article  div > video').getAttribute('src');
-            } else if (document.querySelector('article  div[role] div > img')) {
-                url = document.querySelector('article  div[role] div > img').getAttribute('src');
+            if (articleNode.querySelector('article  div > video')) {
+                url = articleNode.querySelector('article  div > video').getAttribute('src');
+            } else if (articleNode.querySelector('article  div[role] div > img')) {
+                url = articleNode.querySelector('article  div[role] div > img').getAttribute('src');
+            } else {
+                console.log("Err: not find media at handle post single")
             }
         } else {
             // multiple imgs or videos
             let idx = 0;
             // check current index
-            if (!document.querySelector('.coreSpriteLeftChevron')) {
+            if (!articleNode.querySelector('.coreSpriteLeftChevron')) {
                 idx = 0;
-            } else if (!document.querySelector('.coreSpriteRightChevron')) {
+            } else if (!articleNode.querySelector('.coreSpriteRightChevron')) {
                 idx = list.length - 1;
             } else idx = 1;
 
