@@ -2,7 +2,7 @@
 // @name                Instagram Download Button
 // @name:zh-TW          Instagram 下載器
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.4.2
+// @version             1.5.0
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          opera
@@ -53,12 +53,13 @@
         let lang = document.getElementsByTagName("html")[0].getAttribute('lang');
         let sharePostSelector = "section > button > div";
         let menuSeletor = "header button > span";
+        let storySeletor = "header button > span";
         let profileSelector = "header section svg";
 
         // check story
         if (document.getElementsByClassName("custom-btn").length === 0) {
             if (document.querySelector(menuSeletor)) {
-                addCustomBtn(document.querySelector(menuSeletor), "white", append2Post);
+                addCustomBtn(document.querySelector(storySeletor), "white", append2Post);
             }
         }
 
@@ -99,32 +100,54 @@
     }
 
     function createCustomBtn(svg, iconColor, className, marginLeft) {
-        let newBtn = document.createElement("span");
+        let newBtn = document.createElement("a");
         newBtn.innerHTML = svg.replace('%color', iconColor);
         newBtn.setAttribute("class", "custom-btn " + className);
-        newBtn.setAttribute("title", "open in new tab");
+        newBtn.setAttribute("target", "_blank");
         newBtn.setAttribute("style", "cursor: pointer;margin-left: " + marginLeft + ";margin-top: 8px;");
-        newBtn.onclick = customBtnClicked;
+        if (className.includes("newtab")) {
+            newBtn.onmouseenter = onMouseInHandler;
+            newBtn.setAttribute("title", "Open in new tab");
+        } else {
+            newBtn.onclick = onClickHandler;
+            newBtn.setAttribute("title", "Download");
+        }
         return newBtn;
     }
 
-    function customBtnClicked(e) {
+    function onClickHandler(e) {
         // handle button click
         let target = e.currentTarget;
         if (window.location.pathname.includes('stories')) {
-            handleStory(target);
-        } else if (document.querySelector('header') && 
-                   document.querySelector('header').contains(target)) {
-            handleProfile(target);
+            storyOnClicked(target);
+        } else if (document.querySelector('header') &&
+            document.querySelector('header').contains(target)) {
+            profileOnClicked(target);
         } else {
-            handlePost(target);
+            postOnClicked(target);
         }
     }
 
-    function handleProfile(target) {
+    function onMouseInHandler(e) {
+        let target = e.currentTarget;
+        if (window.location.pathname.includes('stories')) {
+            storyOnMouseIn(target);
+        } else if (document.querySelector('header') &&
+            document.querySelector('header').contains(target)) {
+            profileOnMouseIn(target);
+        } else {
+            postOnMouseIn(target);
+        }
+    }
+
+    function profileOnMouseIn(target) {
+        let url = profileGetUrl(target);
+        target.setAttribute("href", url);
+    }
+
+    function profileOnClicked(target) {
         // extract profile picture url and download or open it
-        let img = document.querySelector('header img');
-        let url = img.getAttribute('src');
+        let url = profileGetUrl(target);
         let filename = '.png';
 
         if (url.length > 0) {
@@ -144,19 +167,58 @@
         }
     }
 
-    function handlePost(target) {
+    function profileGetUrl(target) {
+        let img = document.querySelector('header img');
+        let url = img.getAttribute('src');
+        return url;
+    }
+
+    function postOnMouseIn(target) {
+        let articleNode = postGetArticleNode(target);
+        let url = postGetUrl(target, articleNode);
+        target.setAttribute("href", url);
+    }
+
+    function postOnClicked(target) {
         // extract url from target post and download or open it
+        let articleNode = postGetArticleNode(target);
+        let url = postGetUrl(target, articleNode);
+        let filename = "";
+
+        // ==============================
+        // = download or open media url =
+        // ==============================
+        if (url.length > 0) {
+            // check url
+            if (target.getAttribute("class").includes("download-btn")) {
+                // generate filename 
+                // add time to filename
+                let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
+                filename = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
+                // add poster name to filename
+                let posterName = articleNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
+                filename = posterName + '-' + filename;
+
+                // download
+                downloadResource(url, filename);
+            } else {
+                // open url in new tab
+                openResource(url);
+            }
+        }
+    }
+
+    function postGetArticleNode(target) {
         let articleNode = target;
         while (articleNode && articleNode.tagName !== "ARTICLE") {
             articleNode = articleNode.parentNode;
         }
+        return articleNode;
+    }
+
+    function postGetUrl(target, articleNode) {
         let list = articleNode.querySelectorAll('li[style][class]');
         let url = "";
-        let filename = "";
-
-        // =====================
-        // = extract media url =
-        // =====================
         if (list.length === 0) {
             // single img or video
             if (articleNode.querySelector('article  div > video')) {
@@ -183,42 +245,17 @@
                 url = node.querySelector('img').getAttribute('src');
             }
         }
-
-        // ==============================
-        // = download or open media url =
-        // ==============================
-        if (url.length > 0) {
-            // check url
-            if (target.getAttribute("class").includes("download-btn")) {
-                // generate filename 
-                // add time to filename
-                let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
-                filename = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
-                // add poster name to filename
-                let posterName = articleNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
-                filename = posterName + '-' + filename;
-
-                // download
-                downloadResource(url, filename);
-            } else {
-                // open url in new tab
-                openResource(url);
-            }
-        }
+        return url
+    }
+    
+    function storyOnMouseIn(target) {
+        let url = storyGetUrl(target);
+        target.setAttribute('href', url);
     }
 
-    function handleStory(target) {
+    function storyOnClicked(target) {
         // extract url from target story and download or open it
-        let url = "";
-
-        // =====================
-        // = extract media url =
-        // =====================
-        if (document.querySelector('video > source')) {
-            url = document.querySelector('video > source').getAttribute('src');
-        } else if (document.querySelector('img[decoding="sync"]')) {
-            url = document.querySelector('img[decoding="sync"]').getAttribute('src');
-        }
+        let url = storyGetUrl(target);
         let filename = url.split('?')[0].split('\\').pop().split('/').pop();
 
         // ==============================
@@ -232,13 +269,21 @@
             // add poster name to filename
             let posterName = document.querySelector('header a').getAttribute('href').replace(/\//g, '');
             filename = posterName + '-' + filename;
-
-            // download
             downloadResource(url, filename);
         } else {
             // open url in new tab
             openResource(url);
         }
+    }
+
+    function storyGetUrl(target) {
+        let url = "";
+        if (document.querySelector('video > source')) {
+            url = document.querySelector('video > source').getAttribute('src');
+        } else if (document.querySelector('img[decoding="sync"]')) {
+            url = document.querySelector('img[decoding="sync"]').getAttribute('src');
+        }
+        return url;
     }
 
     function openResource(url) {
