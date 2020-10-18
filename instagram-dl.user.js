@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.5.0
+// @version             1.5.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          opera
@@ -169,7 +169,7 @@
             if (target.getAttribute("class").includes("download-btn")) {
                 // generate filename 
                 // add poster name to filename
-                let posterName = document.querySelector('header h1').textContent;
+                let posterName = document.querySelector('header h2').textContent;
                 filename = posterName + filename;
 
                 // download
@@ -197,7 +197,6 @@
         // extract url from target post and download or open it
         let articleNode = postGetArticleNode(target);
         let url = postGetUrl(target, articleNode);
-        let filename = "";
 
         // ==============================
         // = download or open media url =
@@ -205,6 +204,7 @@
         if (url.length > 0) {
             // check url
             if (target.getAttribute("class").includes("download-btn")) {
+                let filename = url.split('?')[0].split('\\').pop().split('/').pop();;
                 // generate filename 
                 // add time to filename
                 let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
@@ -240,7 +240,7 @@
             } else if (articleNode.querySelector('article  div[role] div > img')) {
                 url = articleNode.querySelector('article  div[role] div > img').getAttribute('src');
             } else {
-                console.log("Err: not find media at handle post single")
+                console.log("Err: not find media at handle post single");
             }
         } else {
             // multiple imgs or videos

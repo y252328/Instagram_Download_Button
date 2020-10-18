@@ -3,7 +3,7 @@
 
 This repository is a Javascript for Greasemonkey/Tampermonkey. This script will add a download button and open button to your Instagram and you can download or open profile pictures and media in the posts, stories, and highlights by one click.
 
-> Note: This script only test on Google Chrome, Firefox, Edge and Opera with Tampermonkey.
+> Note: This script only tests on Google Chrome, Firefox, Edge, and Opera with Tampermonkey.
 
 <img src="img/profile.png" alt="drawing" width="436" height="134"/>
 <br/>
