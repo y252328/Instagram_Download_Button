@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.5.1
+// @version             1.6.0
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          opera
@@ -62,6 +62,27 @@
         `<svg id="Capa_1" style="fill:%color;" viewBox="0 0 482.239 482.239" xmlns="http://www.w3.org/2000/svg" height="24" width="24">
     <path d="m465.016 0h-344.456c-9.52 0-17.223 7.703-17.223 17.223v86.114h-86.114c-9.52 0-17.223 7.703-17.223 17.223v344.456c0 9.52 7.703 17.223 17.223 17.223h344.456c9.52 0 17.223-7.703 17.223-17.223v-86.114h86.114c9.52 0 17.223-7.703 17.223-17.223v-344.456c0-9.52-7.703-17.223-17.223-17.223zm-120.56 447.793h-310.01v-310.01h310.011v310.01zm103.337-103.337h-68.891v-223.896c0-9.52-7.703-17.223-17.223-17.223h-223.896v-68.891h310.011v310.01z"/>
 </svg>`;
+
+    document.addEventListener('keydown', keyDownHandler);
+
+    function keyDownHandler(event) {
+        if (window.location.href === 'https://www.instagram.com/') return;
+        if (event.altKey && event.key === 'j') {
+            let buttons = document.getElementsByClassName('download-btn');
+            if (buttons.length > 0) {
+                onMouseInHandler({ currentTarget: buttons[buttons.length-1] });
+                buttons[buttons.length-1].click();
+            }
+        }
+        // CTRL + L combo 
+        if (event.altKey && event.key === 'o') {
+            let buttons = document.getElementsByClassName('newtab-btn');
+            if (buttons.length > 0) {
+                onMouseInHandler({ currentTarget: buttons[buttons.length-1] });
+                buttons[buttons.length-1].click();
+            }
+        }
+    }
 
     var checkExistTimer = setInterval(function () {
         let lang = document.getElementsByTagName("html")[0].getAttribute('lang');
@@ -261,7 +282,7 @@
         }
         return url
     }
-    
+
     function storyOnMouseIn(target) {
         let url = storyGetUrl(target);
         target.setAttribute('href', url);
