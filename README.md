@@ -5,6 +5,14 @@ This repository is a Javascript for Greasemonkey/Tampermonkey. This script will 
 
 > Note: This script only tests on Google Chrome, Firefox, Edge, and Opera with Tampermonkey.
 
+## Shortcut Keys
+* `Alt` + `i` : Open the media in the new tab
+* `Alt` + `k` : Download the media
+* `Alt` + `j` : Next media in the multiple media post
+* `Alt` + `l` : Previous media in the multiple media post
+
+> The shortcut keys do not work on the Instagram main page currently
+
 <img src="img/profile.png" alt="drawing" width="436" height="134"/>
 <br/>
 <img src="img/post.png" alt="drawing" width="467" height="294"/>

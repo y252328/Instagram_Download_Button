@@ -5,6 +5,14 @@
 
 > Note: 目前此腳本只在Google Chrome、Firefox、Edge與Opera上的Tampermonkey測試過
 
+## 快捷鍵
+* `Alt` + `i` : 在新視窗開啟圖片/影片
+* `Alt` + `k` : 下載圖片/影片
+* `Alt` + `j` : 向前一個圖片/影片 (多圖貼文中)
+* `Alt` + `l` : 向後一個圖片/影片 (多圖貼文中)
+
+> 目前快捷鍵無法在Instagram主頁上使用
+
 <img src="img/profile.png" alt="drawing" width="436" height="134"/>
 <br/>
 <img src="img/post.png" alt="drawing" width="467" height="294"/>

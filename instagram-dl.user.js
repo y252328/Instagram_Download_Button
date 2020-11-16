@@ -67,19 +67,37 @@
 
     function keyDownHandler(event) {
         if (window.location.href === 'https://www.instagram.com/') return;
-        if (event.altKey && event.key === 'j') {
+
+        if (event.altKey && event.key === 'k') {
             let buttons = document.getElementsByClassName('download-btn');
             if (buttons.length > 0) {
-                onMouseInHandler({ currentTarget: buttons[buttons.length-1] });
-                buttons[buttons.length-1].click();
+                let mockEvent = { currentTarget: buttons[buttons.length-1] };
+                onMouseInHandler(mockEvent);
+                onClickHandler(mockEvent);
             }
         }
-        // CTRL + L combo 
-        if (event.altKey && event.key === 'o') {
+        if (event.altKey && event.key === 'i') {
             let buttons = document.getElementsByClassName('newtab-btn');
             if (buttons.length > 0) {
-                onMouseInHandler({ currentTarget: buttons[buttons.length-1] });
-                buttons[buttons.length-1].click();
+                let mockEvent = { currentTarget: buttons[buttons.length-1] };
+                onMouseInHandler(mockEvent);
+                onClickHandler(mockEvent);
+            }
+        }
+
+        if (event.altKey && event.key === 'l') {
+            // right arrow
+            let buttons = document.getElementsByClassName('coreSpriteRightChevron');
+            if (buttons.length > 0) {
+                buttons[0].click();
+            }
+        }
+
+        if (event.altKey && event.key === 'j') {
+            // left arrow
+            let buttons = document.getElementsByClassName('coreSpriteLeftChevron');
+            if (buttons.length > 0) {
+                buttons[0].click();
             }
         }
     }
