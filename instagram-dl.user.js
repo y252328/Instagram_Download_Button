@@ -9,10 +9,9 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.6.0
+// @version             1.7.0
 // @compatible          chrome
 // @compatible          firefox
-// @compatible          opera
 // @compatible          edge
 // @description         Add the download button and the open button to download or open profile picture and media in the posts, stories, and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
@@ -31,6 +30,13 @@
 
 (function () {
     'use strict';
+    // =================
+    // =    Options    =
+    // =================
+    const attachLink = true; // add link into the button elements
+
+    // ==================
+
     function yyyymmdd(date) {
         // ref: https://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object?page=1&tab=votes#tab-top
         var mm = date.getMonth() + 1; // getMonth() is zero-based
@@ -72,7 +78,7 @@
             let buttons = document.getElementsByClassName('download-btn');
             if (buttons.length > 0) {
                 let mockEvent = { currentTarget: buttons[buttons.length-1] };
-                onMouseInHandler(mockEvent);
+                if (attachLink) onMouseInHandler(mockEvent);
                 onClickHandler(mockEvent);
             }
         }
@@ -80,7 +86,7 @@
             let buttons = document.getElementsByClassName('newtab-btn');
             if (buttons.length > 0) {
                 let mockEvent = { currentTarget: buttons[buttons.length-1] };
-                onMouseInHandler(mockEvent);
+                if (attachLink) onMouseInHandler(mockEvent);
                 onClickHandler(mockEvent);
             }
         }
@@ -158,11 +164,11 @@
         newBtn.setAttribute("class", "custom-btn " + className);
         newBtn.setAttribute("target", "_blank");
         newBtn.setAttribute("style", "cursor: pointer;margin-left: " + marginLeft + ";margin-top: 8px;");
+        newBtn.onclick = onClickHandler;
+        if (attachLink) newBtn.onmouseenter = onMouseInHandler;
         if (className.includes("newtab")) {
-            newBtn.onmouseenter = onMouseInHandler;
             newBtn.setAttribute("title", "Open in new tab");
         } else {
-            newBtn.onclick = onClickHandler;
             newBtn.setAttribute("title", "Download");
         }
         return newBtn;
@@ -179,10 +185,13 @@
         } else {
             postOnClicked(target);
         }
+        e.stopPropagation();
+        e.preventDefault();
     }
 
     function onMouseInHandler(e) {
         let target = e.currentTarget;
+        if (!attachLink) return;
         if (window.location.pathname.includes('stories')) {
             storyOnMouseIn(target);
         } else if (document.querySelector('header') &&
