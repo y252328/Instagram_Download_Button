@@ -3,7 +3,7 @@
 
 此腳本會在Instagram頁面上新增下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
 
-如果有任何問題，歡迎與我聯繫!
+如果有任何問題，歡迎與我聯繫並附上執行環境!
 > Note: 目前此腳本只在Windows 10 1903 64-bit上的Chrome、Edge與Firefox搭配Tampermonkey測試過
 
 ## 選項

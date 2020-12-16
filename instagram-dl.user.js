@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.7.0
+// @version             1.8.0
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -109,7 +109,6 @@
     }
 
     var checkExistTimer = setInterval(function () {
-        let lang = document.getElementsByTagName("html")[0].getAttribute('lang');
         let sharePostSelector = "section > button > div";
         let menuSeletor = "header button > span";
         let storySeletor = "header button > span";
@@ -177,6 +176,8 @@
     function onClickHandler(e) {
         // handle button click
         let target = e.currentTarget;
+        e.stopPropagation();
+        e.preventDefault();
         if (window.location.pathname.includes('stories')) {
             storyOnClicked(target);
         } else if (document.querySelector('header') &&
@@ -185,8 +186,6 @@
         } else {
             postOnClicked(target);
         }
-        e.stopPropagation();
-        e.preventDefault();
     }
 
     function onMouseInHandler(e) {
@@ -235,16 +234,16 @@
         return url;
     }
 
-    function postOnMouseIn(target) {
+    async function postOnMouseIn(target) {
         let articleNode = postGetArticleNode(target);
-        let url = postGetUrl(target, articleNode);
+        let url = await postGetUrl(target, articleNode);
         target.setAttribute("href", url);
     }
 
-    function postOnClicked(target) {
+    async function postOnClicked(target) {
         // extract url from target post and download or open it
         let articleNode = postGetArticleNode(target);
-        let url = postGetUrl(target, articleNode);
+        let url = await postGetUrl(target, articleNode);
 
         // ==============================
         // = download or open media url =
@@ -278,13 +277,20 @@
         return articleNode;
     }
 
-    function postGetUrl(target, articleNode) {
+    async function postGetUrl(target, articleNode) {
+        // meta[property="og:video"]
         let list = articleNode.querySelectorAll('li[style][class]');
         let url = "";
         if (list.length === 0) {
             // single img or video
             if (articleNode.querySelector('article  div > video')) {
-                url = articleNode.querySelector('article  div > video').getAttribute('src');
+                let videoElem = articleNode.querySelector('article  div > video');
+                url = videoElem.getAttribute('src');
+                if (videoElem.hasAttribute('videoURL')) {
+                    url = videoElem.getAttribute('videoURL');
+                } else if (url === null || url.includes('blob')) {
+                    url = await fetchVideoURL(articleNode, videoElem);
+                }
             } else if (articleNode.querySelector('article  div[role] div > img')) {
                 url = articleNode.querySelector('article  div[role] div > img').getAttribute('src');
             } else {
@@ -302,12 +308,34 @@
 
             let node = list[idx];
             if (node.querySelector('video')) {
-                url = node.querySelector('video').getAttribute('src');
+                let videoElem = node.querySelector('video');
+                url = videoElem.getAttribute('src');
+                if (videoElem.hasAttribute('videoURL')) {
+                    url = videoElem.getAttribute('videoURL');
+                } else if (url === null || url.includes('blob')) {
+                    url = await fetchVideoURL(articleNode, videoElem);
+                }
             } else if (node.querySelector('img')) {
                 url = node.querySelector('img').getAttribute('src');
             }
         }
         return url
+    }
+
+    async function fetchVideoURL(articleNode, videoElem) {
+        let poster = videoElem.getAttribute('poster');
+        let timeNodes = articleNode.querySelectorAll('time');
+        let posterUrl = timeNodes[timeNodes.length-1].parentNode.href;
+        let posterPattern = /\/([^\/?]*)\?/;
+        let posterMatch = poster.match(posterPattern);
+        let postFileName = posterMatch[1];
+        let pattern = new RegExp(`${postFileName}.*?video_url":("[^"]*")`, 's');
+        let resp = await fetch(posterUrl);
+        let content = await resp.text();
+        let match = content.match(pattern);
+        let videoUrl = JSON.parse(match[1]);
+        videoElem.setAttribute('videoURL', videoUrl)
+        return videoUrl;
     }
 
     function storyOnMouseIn(target) {
