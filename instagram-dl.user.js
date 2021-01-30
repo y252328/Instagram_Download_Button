@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.8.0
+// @version             1.8.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -339,13 +339,15 @@
     }
 
     function storyOnMouseIn(target) {
-        let url = storyGetUrl(target);
+        let sectionNode = storyGetSectionNode(target);
+        let url = storyGetUrl(target, sectionNode);
         target.setAttribute('href', url);
     }
 
     function storyOnClicked(target) {
         // extract url from target story and download or open it
-        let url = storyGetUrl(target);
+        let sectionNode = storyGetSectionNode(target);
+        let url = storyGetUrl(target, sectionNode);
         let filename = url.split('?')[0].split('\\').pop().split('/').pop();
 
         // ==============================
@@ -354,10 +356,10 @@
         if (target.getAttribute("class").includes("download-btn")) {
             // generate filename 
             // add time to filename
-            let datetime = new Date(document.querySelector('time').getAttribute('datetime'));
+            let datetime = new Date(sectionNode.querySelector('time').getAttribute('datetime'));
             filename = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
             // add poster name to filename
-            let posterName = document.querySelector('header a').getAttribute('href').replace(/\//g, '');
+            let posterName = sectionNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
             filename = posterName + '-' + filename;
             downloadResource(url, filename);
         } else {
@@ -366,12 +368,20 @@
         }
     }
 
-    function storyGetUrl(target) {
+    function storyGetSectionNode(target) {
+        let sectionNode = target;
+        while (sectionNode && sectionNode.tagName !== "SECTION") {
+            sectionNode = sectionNode.parentNode;
+        }
+        return sectionNode;
+    }
+
+    function storyGetUrl(target, sectionNode) {
         let url = "";
-        if (document.querySelector('video > source')) {
-            url = document.querySelector('video > source').getAttribute('src');
-        } else if (document.querySelector('img[decoding="sync"]')) {
-            url = document.querySelector('img[decoding="sync"]').getAttribute('src');
+        if (sectionNode.querySelector('video > source')) {
+            url = sectionNode.querySelector('video > source').getAttribute('src');
+        } else if (sectionNode.querySelector('img[decoding="sync"]')) {
+            url = sectionNode.querySelector('img[decoding="sync"]').getAttribute('src');
         }
         return url;
     }
