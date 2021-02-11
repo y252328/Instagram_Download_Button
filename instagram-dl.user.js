@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.8.1
+// @version             1.8.2
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -109,7 +109,7 @@
     }
 
     var checkExistTimer = setInterval(function () {
-        let sharePostSelector = "section > button > div";
+        let sharePostSelector = "section span button";
         let menuSeletor = "header button > span";
         let storySeletor = "header button > span";
         let profileSelector = "header section svg";
