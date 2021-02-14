@@ -8,7 +8,15 @@
 
 ## 選項
 透過修改腳本開頭中的常數變數可以設定此腳本。
-* `attachLink` : 設為true時，將連結加入按鈕元素中
+* `attachLink` : boolean, 設為true時，將連結加入按鈕元素中
+* `postFilenameTemplate` : string，貼文檔案的命名規則
+* `storyFilenameTemplate` : string，現實動態的檔案命名規則
+
+## Naming Template
+* `%id%` : 貼文者的ID
+* `%datetime%` : 貼文時間
+* `%medianame%` : 原始的檔案名稱
+* `%ext%` : 副檔名
 
 ## 快捷鍵
 * `Alt` + `i` : 在新視窗開啟圖片/影片

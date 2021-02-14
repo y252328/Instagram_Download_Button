@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.8.2
+// @version             1.9.0
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -34,6 +34,8 @@
     // =    Options    =
     // =================
     const attachLink = true; // add link into the button elements
+    const postFilenameTemplate = "%id%-%datetime%-%medianame%.%ext%-%datetime%";
+    const storyFilenameTemplate = postFilenameTemplate;
 
     // ==================
 
@@ -215,11 +217,8 @@
             // check url
             if (target.getAttribute("class").includes("download-btn")) {
                 // generate filename 
-                // add poster name to filename
                 let posterName = document.querySelector('header h2').textContent;
                 filename = posterName + filename;
-
-                // download
                 downloadResource(url, filename);
             } else {
                 // open url in new tab
@@ -251,16 +250,15 @@
         if (url.length > 0) {
             // check url
             if (target.getAttribute("class").includes("download-btn")) {
-                let filename = url.split('?')[0].split('\\').pop().split('/').pop();;
-                // generate filename 
-                // add time to filename
+                let mediaName = url.split('?')[0].split('\\').pop().split('/').pop();
+                let ext = mediaName.substr(mediaName.lastIndexOf('.') + 1);
+                mediaName = mediaName.substring(0, mediaName.lastIndexOf('.') + 1);
                 let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
-                filename = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
-                // add poster name to filename
+                console.log(datetime);
+                datetime = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '');
                 let posterName = articleNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
-                filename = posterName + '-' + filename;
-
-                // download
+                
+                let filename = filenameFormat(postFilenameTemplate, posterName, datetime, mediaName, ext);
                 downloadResource(url, filename);
             } else {
                 // open url in new tab
@@ -348,19 +346,19 @@
         // extract url from target story and download or open it
         let sectionNode = storyGetSectionNode(target);
         let url = storyGetUrl(target, sectionNode);
-        let filename = url.split('?')[0].split('\\').pop().split('/').pop();
 
         // ==============================
         // = download or open media url =
         // ==============================
         if (target.getAttribute("class").includes("download-btn")) {
-            // generate filename 
-            // add time to filename
+            let mediaName = url.split('?')[0].split('\\').pop().split('/').pop();
+            let ext = mediaName.substr(mediaName.lastIndexOf('.') + 1);
+            mediaName = mediaName.substring(0, mediaName.lastIndexOf('.') + 1);
             let datetime = new Date(sectionNode.querySelector('time').getAttribute('datetime'));
-            filename = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '') + '-' + filename;
-            // add poster name to filename
+            datetime = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '');
             let posterName = sectionNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
-            filename = posterName + '-' + filename;
+
+            let filename = filenameFormat(storyFilenameTemplate, posterName, datetime, mediaName, ext);
             downloadResource(url, filename);
         } else {
             // open url in new tab
@@ -384,6 +382,15 @@
             url = sectionNode.querySelector('img[decoding="sync"]').getAttribute('src');
         }
         return url;
+    }
+
+    function filenameFormat(template, id, datetime, medianame, ext) {
+        let filename = template;
+        filename = filename.replaceAll("%id%", id);
+        filename = filename.replaceAll("%datetime%", datetime);
+        filename = filename.replaceAll("%medianame%", medianame);
+        filename = filename.replaceAll("%ext%", ext);
+        return filename;
     }
 
     function openResource(url) {

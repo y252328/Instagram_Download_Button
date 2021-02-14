@@ -8,7 +8,15 @@ If any problem, please feel free to contact me in English or Chinese and attach 
 
 ## Options
 This script can be configured by modifying the following constant variables in the head of this script.
-* `attachLink` : attach the link into the button elements if true
+* `attachLink` : boolean, attach the link into the button elements if true
+* `postFilenameTemplate` : string, naming rule for media downloading in the post
+* `storyFilenameTemplate` : string, naming rule for media downloading in the story
+
+## Naming Template
+* `%id%` : the poster id
+* `%datetime%` : the media upload time
+* `%medianame%` : the original media file name
+* `%ext%` : the file extension of media
 
 ## Shortcut Keys
 * `Alt` + `i` : Open the media in the new tab
