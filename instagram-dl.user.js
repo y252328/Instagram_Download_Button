@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.9.0
+// @version             1.9.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -34,7 +34,7 @@
     // =    Options    =
     // =================
     const attachLink = true; // add link into the button elements
-    const postFilenameTemplate = "%id%-%datetime%-%medianame%.%ext%-%datetime%";
+    const postFilenameTemplate = "%id%-%datetime%-%medianame%.%ext%";
     const storyFilenameTemplate = postFilenameTemplate;
 
     // ==================
