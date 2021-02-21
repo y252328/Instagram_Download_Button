@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.9.1
+// @version             1.9.2
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -254,7 +254,6 @@
                 let ext = mediaName.substr(mediaName.lastIndexOf('.') + 1);
                 mediaName = mediaName.substring(0, mediaName.lastIndexOf('.') + 1);
                 let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
-                console.log(datetime);
                 datetime = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '');
                 let posterName = articleNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
                 
@@ -379,6 +378,11 @@
         if (sectionNode.querySelector('video > source')) {
             url = sectionNode.querySelector('video > source').getAttribute('src');
         } else if (sectionNode.querySelector('img[decoding="sync"]')) {
+            let img = sectionNode.querySelector('img[decoding="sync"]');
+            url = img.srcset.split(/ \d+w/g)[0].trim(); // extract first src from srcset attr. of img
+            if (url.length > 0) {
+                return url;
+            }
             url = sectionNode.querySelector('img[decoding="sync"]').getAttribute('src');
         }
         return url;
