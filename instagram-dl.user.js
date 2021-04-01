@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.9.3
+// @version             1.9.4
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -114,7 +114,7 @@
         let sharePostSelector = "article section span button";
         let menuSeletor = "header button > span";
         let storySeletor = "header button > span";
-        let profileSelector = "header section svg";
+        let profileSelector = "header section svg circle";
 
         // check story
         if (document.getElementsByClassName("custom-btn").length === 0) {
@@ -141,7 +141,7 @@
     }, 500);
 
     function append2Header(node, btn) {
-        node.parentNode.parentNode.parentNode.insertBefore(btn, node.parentNode.parentNode);
+        node.parentNode.parentNode.parentNode.appendChild(btn, node.parentNode.parentNode);
     }
 
     function append2Post(node, btn) {
