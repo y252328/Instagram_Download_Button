@@ -331,6 +331,7 @@
         let content = await resp.text();
         let match = content.match(pattern);
         let videoUrl = JSON.parse(match[1]);
+	videoUrl = videoUrl.replace(/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/g, 'https://scontent.cdninstagram.com');
         videoElem.setAttribute('videoURL', videoUrl)
         return videoUrl;
     }
