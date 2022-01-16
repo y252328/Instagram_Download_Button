@@ -140,7 +140,8 @@
     }, 500);
 
     function append2Header(node, btn) {
-        node.parentNode.parentNode.parentNode.appendChild(btn, node.parentNode.parentNode);
+        // CHANGED add extra .parentNode because Instagram page structure changed
+        node.parentNode.parentNode.parentNode.parentNode.appendChild(btn, node.parentNode.parentNode);
     }
 
     function append2Post(node, btn) {
