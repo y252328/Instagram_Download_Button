@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.9.5
+// @version             1.9.6
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -122,19 +122,19 @@
             }
         }
 
-        // check story
-        if (document.getElementsByClassName("custom-btn").length === 0) {
-            if (document.querySelector(storySeletor)) {
-                addCustomBtn(document.querySelector(storySeletor), "white", append2Post);
-            }
-        }
-
         // check post
         let articleList = document.querySelectorAll("article");
         for (let i = 0; i < articleList.length; i++) {
             if (articleList[i].querySelector(sharePostSelector) &&
                 articleList[i].getElementsByClassName("custom-btn").length === 0) {
                 addCustomBtn(articleList[i].querySelector(sharePostSelector), "black", append2Post);
+            }
+        }
+
+        // check story
+        if (document.getElementsByClassName("custom-btn").length === 0) {
+            if (document.querySelector(storySeletor)) {
+                addCustomBtn(document.querySelector(storySeletor), "white", append2Post);
             }
         }
     }, 500);
@@ -190,8 +190,8 @@
     }
 
     function onMouseInHandler(e) {
-        let target = e.currentTarget;
         if (!attachLink) return;
+        let target = e.currentTarget;
         if (window.location.pathname.includes('stories')) {
             storyOnMouseIn(target);
         } else if (document.querySelector('header') &&
@@ -251,11 +251,10 @@
             if (target.getAttribute("class").includes("download-btn")) {
                 let mediaName = url.split('?')[0].split('\\').pop().split('/').pop();
                 let ext = mediaName.substr(mediaName.lastIndexOf('.') + 1);
-                mediaName = mediaName.substring(0, mediaName.lastIndexOf('.') + 1);
+                mediaName = mediaName.substring(0, mediaName.lastIndexOf('.'));
                 let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
                 datetime = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '');
                 let posterName = articleNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
-
                 let filename = filenameFormat(postFilenameTemplate, posterName, datetime, mediaName, ext);
                 downloadResource(url, filename);
             } else {
@@ -325,13 +324,14 @@
         let posterPattern = /\/([^\/?]*)\?/;
         let posterMatch = poster.match(posterPattern);
         let postFileName = posterMatch[1];
-        let pattern = new RegExp(`${postFileName}.*?video_url":("[^"]*")`, 's');
+        // special thanks to 孙年忠 for the pattern (https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/116675)
+        let pattern = new RegExp(`${postFileName}.*?video_versions.*?url":("[^"]*")`, 's');
         let resp = await fetch(posterUrl);
         let content = await resp.text();
         let match = content.match(pattern);
         let videoUrl = JSON.parse(match[1]);
         videoUrl = videoUrl.replace(/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/g, 'https://scontent.cdninstagram.com');
-        videoElem.setAttribute('videoURL', videoUrl)
+        videoElem.setAttribute('videoURL', videoUrl);
         return videoUrl;
     }
 
@@ -352,7 +352,7 @@
         if (target.getAttribute("class").includes("download-btn")) {
             let mediaName = url.split('?')[0].split('\\').pop().split('/').pop();
             let ext = mediaName.substr(mediaName.lastIndexOf('.') + 1);
-            mediaName = mediaName.substring(0, mediaName.lastIndexOf('.') + 1);
+            mediaName = mediaName.substring(0, mediaName.lastIndexOf('.'));
             let datetime = new Date(sectionNode.querySelector('time').getAttribute('datetime'));
             datetime = yyyymmdd(datetime) + '_' + datetime.toTimeString().split(' ')[0].replace(/:/g, '');
             let posterName = sectionNode.querySelector('header a').getAttribute('href').replace(/\//g, '');
@@ -421,7 +421,6 @@
     // Current blob size limit is around 500MB for browsers
     function downloadResource(url, filename) {
         // ref: https://stackoverflow.com/questions/49474775/chrome-65-blocks-cross-origin-a-download-client-side-workaround-to-force-down
-        console.log(url);
         if (!filename) filename = url.split('\\').pop().split('/').pop();
         fetch(url, {
             headers: new Headers({
