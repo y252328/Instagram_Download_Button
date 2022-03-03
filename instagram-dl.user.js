@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.9.6
+// @version             1.9.7
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -320,7 +320,8 @@
     async function fetchVideoURL(articleNode, videoElem) {
         let poster = videoElem.getAttribute('poster');
         let timeNodes = articleNode.querySelectorAll('time');
-        let posterUrl = timeNodes[timeNodes.length - 1].parentNode.href;
+        // special thanks 孙年忠 (https://greasyfork.org/en/scripts/406535-instagram-download-button/discussions/120159)
+        let posterUrl = timeNodes[timeNodes.length - 1].parentNode.parentNode.href;
         let posterPattern = /\/([^\/?]*)\?/;
         let posterMatch = poster.match(posterPattern);
         let postFileName = posterMatch[1];
