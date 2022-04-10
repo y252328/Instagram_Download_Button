@@ -299,7 +299,7 @@
             if (!articleNode.querySelector('.coreSpriteLeftChevron')) {
                 idx = 0;
             } else if (!articleNode.querySelector('.coreSpriteRightChevron')) {
-                idx = list.length - 1;
+                idx = list.length - 2;
             } else idx = 1;
 
             let node = list[idx];
