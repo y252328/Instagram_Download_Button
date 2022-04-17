@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.9.7
+// @version             1.10
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -112,13 +112,14 @@
 
     var checkExistTimer = setInterval(function () {
         let sharePostSelector = "article section span button";
-        let storySeletor = "header button > div";
+        let storySelector = "header button > div";
         let profileSelector = "header section svg circle";
+        let iconColor = window.location.href.includes("dark") ? "white" : "black";
 
         // check profile
         if (document.getElementsByClassName("custom-btn").length === 0) {
             if (document.querySelector(profileSelector)) {
-                addCustomBtn(document.querySelector(profileSelector), "black", append2Header);
+                addCustomBtn(document.querySelector(profileSelector), iconColor, append2Header);
             }
         }
 
@@ -127,14 +128,14 @@
         for (let i = 0; i < articleList.length; i++) {
             if (articleList[i].querySelector(sharePostSelector) &&
                 articleList[i].getElementsByClassName("custom-btn").length === 0) {
-                addCustomBtn(articleList[i].querySelector(sharePostSelector), "black", append2Post);
+                addCustomBtn(articleList[i].querySelector(sharePostSelector), iconColor, append2Post);
             }
         }
 
         // check story
         if (document.getElementsByClassName("custom-btn").length === 0) {
-            if (document.querySelector(storySeletor)) {
-                addCustomBtn(document.querySelector(storySeletor), "white", append2Post);
+            if (document.querySelector(storySelector)) {
+                addCustomBtn(document.querySelector(storySelector), "white", append2Post);
             }
         }
     }, 500);
