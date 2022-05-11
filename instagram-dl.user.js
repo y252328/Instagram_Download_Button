@@ -392,10 +392,10 @@
 
     function filenameFormat(template, id, datetime, medianame, ext) {
         let filename = template;
-        filename = filename.replaceAll("%id%", id);
-        filename = filename.replaceAll("%datetime%", datetime);
-        filename = filename.replaceAll("%medianame%", medianame);
-        filename = filename.replaceAll("%ext%", ext);
+        filename = filename.replace(new RegExp("%id%", "g"), id);
+        filename = filename.replace(new RegExp("%datetime%", "g"), datetime);
+        filename = filename.replace(new RegExp("%medianame%", "g"), medianame);
+        filename = filename.replace(new RegExp("%ext%", "g"), ext);
         return filename;
     }
 
