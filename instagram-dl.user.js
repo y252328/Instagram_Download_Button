@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.10
+// @version             1.10.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -114,7 +114,9 @@
         let sharePostSelector = "article section span button";
         let storySelector = "header button > div";
         let profileSelector = "header section svg circle";
-        let iconColor = window.location.href.includes("dark") ? "white" : "black";
+        // Thanks for Jenie providing color check code
+        // https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/122185
+        let iconColor = getComputedStyle(document.body).backgroundColor === "rgb(0, 0, 0)" ? "white" : "black";
 
         // check profile
         if (document.getElementsByClassName("custom-btn").length === 0) {
