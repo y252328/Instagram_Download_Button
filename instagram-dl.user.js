@@ -143,7 +143,8 @@
     }, 500);
 
     function append2Header(node, btn) {
-        node.parentNode.parentNode.parentNode.appendChild(btn, node.parentNode.parentNode);
+        // CHANGED add extra .parentNode because Instagram page structure changed
+        node.parentNode.parentNode.parentNode.parentNode.appendChild(btn, node.parentNode.parentNode);
     }
 
     function append2Post(node, btn) {
@@ -301,7 +302,7 @@
             if (!articleNode.querySelector('.coreSpriteLeftChevron')) {
                 idx = 0;
             } else if (!articleNode.querySelector('.coreSpriteRightChevron')) {
-                idx = list.length - 1;
+                idx = list.length - 2;
             } else idx = 1;
 
             let node = list[idx];
