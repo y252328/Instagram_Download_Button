@@ -34,7 +34,7 @@
 	// =    Options    =
 	// =================
 	const attachLink = !1; // add link into the button elements
-	const postFilenameTemplate = '"%id%-%datetime%-%medianame%';
+	const postFilenameTemplate = '%id%-%datetime%-%medianame%';
 	const storyFilenameTemplate = postFilenameTemplate;
 
 	// ==================
