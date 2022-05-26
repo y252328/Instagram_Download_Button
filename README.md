@@ -21,7 +21,7 @@ This script can be configured by modifying the following constant variables in t
 * `%mediaIndex%` : the media index in multiple-media posts
 * ~~`%ext%` : the file extension of media~~
 
-## Shortcut Keys (Invalid in newer versions)
+## Shortcut Keys (May not work in newer versions)
 * `Alt` + `i` : Open the media in the new tab
 * `Alt` + `k` : Download the media
 * `Alt` + `j` : Next media in the multiple media post
@@ -29,15 +29,17 @@ This script can be configured by modifying the following constant variables in t
 
 > The shortcut keys do not work on the Instagram main page currently
 
+## Contributors
+* [孙年忠](https://greasyfork.org/users/829246-%E5%AD%99%E5%B9%B4%E5%BF%A0)
+* [FlowerForWar](https://github.com/FlowerForWar)
+* [xxalexx](https://greasyfork.org/en/users/170052-xxalexx)
+
+## Preview
 <img src="img/profile.png" alt="drawing" width="436" height="134"/>
 <br/>
 <img src="img/post.png" alt="drawing" width="467" height="294"/>
 <br/>
 <img src="img/story&highlight.png" alt="drawing" width="216" height="376"/>
 
-## Contributors
-* [孙年忠](https://greasyfork.org/users/829246-%E5%AD%99%E5%B9%B4%E5%BF%A0)
-* [FlowerForWar](https://github.com/FlowerForWar)
-
-# License
+## License
 [MIT](https://github.com/y252328/Instagram_Download_Button/blob/master/LICENSE)

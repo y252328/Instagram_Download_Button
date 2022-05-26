@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.11b1
+// @version             1.12
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge

@@ -21,7 +21,7 @@
 * `%mediaIndex%` : 檔案的序號
 * ~~`%ext%` : 副檔名~~
 
-## 快捷鍵 (在新版本中無法使用)
+## 快捷鍵 (在新版本中可能無法使用)
 * `Alt` + `i` : 在新視窗開啟圖片/影片
 * `Alt` + `k` : 下載圖片/影片
 * `Alt` + `j` : 向前一個圖片/影片 (多圖貼文中)
@@ -29,15 +29,17 @@
 
 > 目前快捷鍵無法在Instagram主頁上使用
 
+## Contributors
+* [孙年忠](https://greasyfork.org/users/829246-%E5%AD%99%E5%B9%B4%E5%BF%A0)
+* [FlowerForWar](https://github.com/FlowerForWar)
+* [xxalexx](https://greasyfork.org/en/users/170052-xxalexx)
+
+## 預覽
 <img src="img/profile.png" alt="drawing" width="436" height="134"/>
 <br/>
 <img src="img/post.png" alt="drawing" width="467" height="294"/>
 <br/>
 <img src="img/story&highlight.png" alt="drawing" width="216" height="376"/>
 
-## Contributors
-* [孙年忠](https://greasyfork.org/users/829246-%E5%AD%99%E5%B9%B4%E5%BF%A0)
-* [FlowerForWar](https://github.com/FlowerForWar)
-
-# License
+## License
 [MIT](https://github.com/y252328/Instagram_Download_Button/blob/master/LICENSE)
