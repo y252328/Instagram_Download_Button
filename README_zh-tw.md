@@ -8,12 +8,12 @@
 > Note: 目前此腳本只在Windows 10 1903 64-bit上的Chrome ~~、Edge與Firefox~~ 搭配Tampermonkey測試過
 
 ## 關於新的URL獲取方式
-在2022年5月左右，IG修改了網頁造成部分媒體無法下載(尤其是Reels)。從此腳本的1.13版開始增加了新的取得媒體URL的方法且預設為啟用(尚未套用在限時動態)，此方發法可以取得高解析度的圖片(待驗證)且目前所有的媒體都可以下載，但缺點是抓取URL的速度較慢(下載速度沒有影響)且可能還有些bugs，因此若不想使用新方法請將`disableNewUrlFetchMethod`設為**true**.
+在2022年5月左右，IG修改了網頁造成部分媒體無法下載(尤其是Reels)。從此腳本的1.13版開始增加了新的取得媒體URL的方法且預設為啟用(尚未套用在限時動態)，此方發法可以取得高解析度的圖片(待驗證)且目前所有的媒體都可以下載，但缺點是抓取URL的速度較慢(下載速度沒有影響)且可能還有些bugs，因此若不想使用新方法請將`disableNewUrlFetchMethod`設為**true**或是開啟開啟`prefetchAndAttachLink`來預先載入url資訊。
 
 ## 選項
 透過修改腳本開頭中的常數變數可以設定此腳本。
 * `disableNewUrlFetchMethod` : boolean, 停用新的URL獲取方法
-* `attachLink` : boolean, 設為true時，將連結加入按鈕元素中
+* `prefetchAndAttachLink` : boolean, 設為true時，將連結加入按鈕元素中
 * `postFilenameTemplate` : string，貼文檔案的命名規則
 * `storyFilenameTemplate` : string，現實動態的檔案命名規則
 

@@ -8,12 +8,12 @@ The newer versions code only do some simple tests on Chrome. So if you have any 
 > Note: This script only tests on Chrome ~~, Edge, and Firefox~~ with Tampermonkey on Windows 10 1903 64-bit.
 
 ## About the new url fetch method
-Around May 2022, Instagram modified the web page so that some media could not be downloaded (especially Reels). From this script version 1.13, a new method of fetching media url has been added and is enabled by default (not yet applied to Story). This new method can obtain full resolution pictures (to be verified) and all media can be downloaded at present, but the disadvantage is that the speed of fetching URLs is slow (download speed has no effect) and may have some bugs. You can set `disableNewUrlFetchMethod` to **true** if you don't want to use the new method.
+Around May 2022, Instagram modified the web page so that some media could not be downloaded (especially Reels). From this script version 1.13, a new method of fetching media url has been added and is enabled by default (not yet applied to Story). This new method can obtain full resolution pictures (to be verified) and all media can be downloaded at present, but the disadvantage is that the speed of fetching URLs is slow (download speed has no effect) and may have some bugs. You can set `disableNewUrlFetchMethod` to **true** if you don't want to use the new method. Or you can set `prefetchAndAttachLink` to **true** in order to prefetch the URL info.
 
 ## Options
 This script can be configured by modifying the following constant variables in the head of this script.
 * `disableNewUrlFetchMethod` : boolean, disable new url fetch method which uses info API
-* `attachLink` : boolean, attach the link into the button elements if true
+* `prefetchAndAttachLink` : boolean, attach the link into the button elements if true
 * `postFilenameTemplate` : string, naming rule for media downloading in the post
 * `storyFilenameTemplate` : string, naming rule for media downloading in the story
 

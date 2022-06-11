@@ -36,7 +36,7 @@
 	// =================
 	// Old method is faster than new method, but not work and get highest resolution media sometime 
 	const disableNewUrlFetchMethod = false;
-	const attachLink = true; // add link into the button elements
+	const prefetchAndAttachLink = true; // add link into the button elements
 	const postFilenameTemplate = '%id%-%datetime%-%medianame%';
 	const storyFilenameTemplate = postFilenameTemplate;
 
@@ -78,7 +78,7 @@
 			let buttons = document.getElementsByClassName('download-btn');
 			if (buttons.length > 0) {
 				let mockEvent = { currentTarget: buttons[buttons.length - 1] };
-				if (attachLink) onMouseInHandler(mockEvent);
+				if (prefetchAndAttachLink) onMouseInHandler(mockEvent);
 				onClickHandler(mockEvent);
 			}
 		}
@@ -86,7 +86,7 @@
 			let buttons = document.getElementsByClassName('newtab-btn');
 			if (buttons.length > 0) {
 				let mockEvent = { currentTarget: buttons[buttons.length - 1] };
-				if (attachLink) onMouseInHandler(mockEvent);
+				if (prefetchAndAttachLink) onMouseInHandler(mockEvent);
 				onClickHandler(mockEvent);
 			}
 		}
@@ -148,7 +148,7 @@
 	}
 
 	function addCustomBtn(node, iconColor, appendNode) {
-		// add download button and set onclick handler
+		// add download button and set event handlers
 		// add newtab button
 		let newtabBtn = createCustomBtn(svgNewtabBtn, iconColor, 'newtab-btn', '16px');
 		appendNode(node, newtabBtn);
@@ -156,6 +156,11 @@
 		// add download button
 		let downloadBtn = createCustomBtn(svgDownloadBtn, iconColor, 'download-btn', '14px');
 		appendNode(node, downloadBtn);
+		
+		if (prefetchAndAttachLink) {
+			onMouseInHandler({ currentTarget: newtabBtn });
+			onMouseInHandler({ currentTarget: downloadBtn });
+		}
 	}
 
 	function createCustomBtn(svg, iconColor, className, marginLeft) {
@@ -165,7 +170,7 @@
 		newBtn.setAttribute('target', '_blank');
 		newBtn.setAttribute('style', 'cursor: pointer;margin-left: ' + marginLeft + ';margin-top: 8px;');
 		newBtn.onclick = onClickHandler;
-		if (attachLink) newBtn.onmouseenter = onMouseInHandler;
+		if (prefetchAndAttachLink) newBtn.onmouseenter = onMouseInHandler;
 		if (className.includes('newtab')) {
 			newBtn.setAttribute('title', 'Open in new tab');
 		} else {
@@ -189,8 +194,8 @@
 	}
 
 	function onMouseInHandler(e) {
-		if (!attachLink) return;
 		let target = e.currentTarget;
+		if (!prefetchAndAttachLink) return;
 		if (window.location.pathname.includes('stories')) {
 			storyOnMouseIn(target);
 		} else if (document.querySelector('header') && document.querySelector('header').contains(target)) {
