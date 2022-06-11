@@ -33,6 +33,9 @@
 
 > 目前快捷鍵無法在Instagram主頁上使用
 
+## 已知問題
+* 有時會下載到較低畫質的限時動態
+
 ## Contributors (sort by contribution time)
 * [孙年忠](https://greasyfork.org/users/829246-%E5%AD%99%E5%B9%B4%E5%BF%A0)
 * [FlowerForWar](https://github.com/FlowerForWar)

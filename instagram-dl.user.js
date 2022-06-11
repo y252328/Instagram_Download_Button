@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.13
+// @version             1.13.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -42,6 +42,7 @@
 
 	// ==================
 
+	const postIdPattern = /^\/p\/([^/]+)\//;
 	function yyyymmdd(date) {
 		// ref: https://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object?page=1&tab=votes#tab-top
 		var mm = date.getMonth() + 1; // getMonth() is zero-based
@@ -279,7 +280,7 @@
 					.querySelector('a time')
 					.closest('a')
 					.getAttribute('href')
-					.match(/^\/p\/([^/]+)\//)[1];
+					.match(postIdPattern)[1];
 				let filename = filenameFormat(postFilenameTemplate, posterName, datetime, mediaName, postId, mediaIndex);
 				downloadResource(url, filename);
 			} else {
@@ -394,7 +395,7 @@
 				}
 				if (nodeWalker.tagName === "A") {
 					let link = nodeWalker.getAttribute('href');
-					let match = link.match(/p\/([A-Za-z0-9_]+)\//);
+					let match = link.match(postIdPattern);
 					if (match) return match[1];
 				}
 				console.log('Cannot find post id');
