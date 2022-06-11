@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.12
+// @version             1.13
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -30,10 +30,13 @@
 
 (function () {
 	'use strict';
+
 	// =================
 	// =    Options    =
 	// =================
-	const attachLink = !1; // add link into the button elements
+	// Old method is faster than new method, but not work and get highest resolution media sometime 
+	const disableNewUrlFetchMethod = false;
+	const attachLink = true; // add link into the button elements
 	const postFilenameTemplate = '%id%-%datetime%-%medianame%';
 	const storyFilenameTemplate = postFilenameTemplate;
 
@@ -197,6 +200,9 @@
 		}
 	}
 
+	// ================================
+	// ====        Profile         ====
+	// ================================
 	function profileOnMouseIn(target) {
 		let url = profileGetUrl(target);
 		target.setAttribute('href', url);
@@ -219,6 +225,9 @@
 		}
 	}
 
+	// ================================
+	// ====         Post           ====
+	// ================================
 	function profileGetUrl(target) {
 		let img = document.querySelector('header img');
 		let url = img.getAttribute('src');
@@ -286,22 +295,27 @@
 	async function postGetUrl(target, articleNode) {
 		// meta[property="og:video"]
 		let list = articleNode.querySelectorAll('li[style][class]');
-		let url = '';
+		let url = null;
 		let mediaIndex = 0;
 		if (list.length === 0) {
 			// single img or video
-			if (articleNode.querySelector('article  div > video')) {
-				let videoElem = articleNode.querySelector('article  div > video');
-				url = videoElem.getAttribute('src');
-				if (videoElem.hasAttribute('videoURL')) {
-					url = videoElem.getAttribute('videoURL');
-				} else if (url === null || url.includes('blob')) {
-					url = await fetchVideoURL(articleNode, videoElem);
+			if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode);
+			if (url == null) {
+				if (articleNode.querySelector('article  div > video')) {
+					// media type is video
+					let videoElem = articleNode.querySelector('article  div > video');
+					url = videoElem.getAttribute('src');
+					if (videoElem.hasAttribute('videoURL')) {
+						url = videoElem.getAttribute('videoURL');
+					} else if (url === null || url.includes('blob')) {
+						url = await fetchVideoURL(articleNode, videoElem);
+					}
+				} else if (articleNode.querySelector('article  div[role] div > img')) {
+					// media type is image
+					url = articleNode.querySelector('article  div[role] div > img').getAttribute('src');
+				} else {
+					console.log('Err: not find media at handle post single');
 				}
-			} else if (articleNode.querySelector('article  div[role] div > img')) {
-				url = articleNode.querySelector('article  div[role] div > img').getAttribute('src');
-			} else {
-				console.log('Err: not find media at handle post single');
 			}
 		} else {
 			// multiple imgs or videos
@@ -309,31 +323,137 @@
 			const dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${postView ? 1 : 2}) > div > div:nth-child(2)`).children];
 			mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
 
-			const listElements = [...articleNode.querySelectorAll(`:scope > div > div:nth-child(${postView ? 1 : 2}) > div > div:nth-child(1) ul li[style*="translateX"]`)];
-			const listElementWidth = Math.max(...listElements.map(element => element.clientWidth));
+			if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode, mediaIndex);
+			if (url == null) {
+				const listElements = [...articleNode.querySelectorAll(`:scope > div > div:nth-child(${postView ? 1 : 2}) > div > div:nth-child(1) ul li[style*="translateX"]`)];
+				const listElementWidth = Math.max(...listElements.map(element => element.clientWidth));
 
-			const positionsMap = listElements.reduce((result, element) => {
-				// console.log(Number(element.style.transform.match(/-?(\d+)/)[1]));
-				const position = Math.round(Number(element.style.transform.match(/-?(\d+)/)[1]) / listElementWidth);
-				return { ...result, [position]: element };
-			}, {});
+				const positionsMap = listElements.reduce((result, element) => {
+					// console.log(Number(element.style.transform.match(/-?(\d+)/)[1]));
+					const position = Math.round(Number(element.style.transform.match(/-?(\d+)/)[1]) / listElementWidth);
+					return { ...result, [position]: element };
+				}, {});
 
-			console.log({ dotsElements, listElements, listElementWidth, positionsMap });
+				console.log({ dotsElements, listElements, listElementWidth, positionsMap });
 
-			const node = positionsMap[mediaIndex];
-			if (node.querySelector('video')) {
-				let videoElem = node.querySelector('video');
-				url = videoElem.getAttribute('src');
-				if (videoElem.hasAttribute('videoURL')) {
-					url = videoElem.getAttribute('videoURL');
-				} else if (url === null || url.includes('blob')) {
-					url = await fetchVideoURL(articleNode, videoElem);
+				const node = positionsMap[mediaIndex];
+				if (node.querySelector('video')) {
+					// media type is video
+					let videoElem = node.querySelector('video');
+					url = videoElem.getAttribute('src');
+					if (videoElem.hasAttribute('videoURL')) {
+						url = videoElem.getAttribute('videoURL');
+					} else if (url === null || url.includes('blob')) {
+						url = await fetchVideoURL(articleNode, videoElem);
+					}
+				} else if (node.querySelector('img')) {
+					// media type is image
+					url = node.querySelector('img').getAttribute('src');
 				}
-			} else if (node.querySelector('img')) {
-				url = node.querySelector('img').getAttribute('src');
 			}
 		}
 		return { url, mediaIndex };
+	}
+
+	let infoCache = {};
+	async function getUrlFromInfoApi(articleNode, mediaIdx = 0) {
+		// return media url if found else return null
+		// fetch flow:
+		//	 1. find post id
+		//   2. use step1 post id to send request to get post page 
+		//   3. find media id from the reponse text of step2
+		//   4. find app id in clicked page
+		//   5. send info api request with media id and app id
+		//   6. get media url from response json
+		try {
+			const appIdPattern = /"X-IG-App-ID":"([\d]+)"/
+			const mediaIdPattern = /instagram:\/\/media\?id=(\d+)/
+			function findAppId() {
+				let bodyScripts = document.querySelectorAll("body > script");
+				for (let i = 0; i < bodyScripts.length; ++i) {
+					let match = bodyScripts[i].text.match(appIdPattern);
+					if (match) return match[1];
+				}
+				console.log("Cannot find app id");
+				return null;
+			}
+
+			function findPostId() {
+				const timeSelector = 'time._aaqe';
+				let nodeWalker = articleNode.querySelector(timeSelector);
+				for (let i = 0; i < 10; ++i) {
+					nodeWalker = nodeWalker.parentNode;
+					if (nodeWalker.tagName === "A") {
+						break;
+					}
+				}
+				if (nodeWalker.tagName === "A") {
+					let link = nodeWalker.getAttribute('href');
+					let match = link.match(/p\/([A-Za-z0-9_]+)\//);
+					if (match) return match[1];
+				}
+				console.log('Cannot find post id');
+				return null;
+			}
+
+			async function findMediaId(postId) {
+				let postUrl = `https://www.instagram.com/p/${postId}`;
+				let text = '';
+				if (window.location.href === postUrl) {
+					text = document.head.innerHTML;
+				} else {
+					if (!postUrl) return null;
+					let resp = await fetch(postUrl);
+					text = await resp.text();
+					// trim reponse text in order to reduce search time
+					text = text.substring(text.indexOf("<head>"), text.indexOf("</head>"));
+				}
+				let idMatch = text.match(mediaIdPattern);
+				if (!idMatch) return null;
+				return idMatch[1];
+			}
+
+			function getImgOrVedioUrl(item) {
+				if ("video_versions" in item) {
+					return item.video_versions[0].url;
+				} else {
+					return item.image_versions2.candidates[0].url;
+				}
+			}
+
+			let appId = findAppId();
+			if (!appId) return null;
+			let headers = {
+				method: 'GET',
+				headers: {
+					Accept: '*/*',
+					'X-IG-App-ID': appId
+				},
+				credentials: 'include',
+				mode: 'cors'
+			};
+
+			let postId = await findPostId();
+			if (!(postId in infoCache)) {
+				let mediaId = await findMediaId(postId);
+				if (!mediaId) return null;
+				let url = 'https://i.instagram.com/api/v1/media/' + mediaId + '/info/';
+				let resp = await fetch(url, headers);
+				let respJson = await resp.json();
+				infoCache[postId] = respJson;
+			}
+			let infoJson = infoCache[postId];
+			if ('carousel_media' in infoJson.items[0]) {
+				// multi-media post
+				return getImgOrVedioUrl(infoJson.items[0].carousel_media[mediaIdx]);
+			} else {
+				// single media post
+				return getImgOrVedioUrl(infoJson.items[0]);
+			}
+		} catch (e) {
+			console.log(`Uncatched in getUrlFromInfoApi(): ${e}\n${e.stack}`);
+			return null;
+		}
 	}
 
 	async function fetchVideoURL(articleNode, videoElem) {
@@ -341,13 +461,13 @@
 		let timeNodes = articleNode.querySelectorAll('time');
 		// special thanks 孙年忠 (https://greasyfork.org/en/scripts/406535-instagram-download-button/discussions/120159)
 		let posterUrl = timeNodes[timeNodes.length - 1].parentNode.parentNode.href;
-		let posterPattern = /\/([^\/?]*)\?/;
+		const posterPattern = /\/([^\/?]*)\?/;
 		let posterMatch = poster.match(posterPattern);
 		let postFileName = posterMatch[1];
-		// special thanks to 孙年忠 for the pattern (https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/116675)
-		let pattern = new RegExp(`${postFileName}.*?video_versions.*?url":("[^"]*")`, 's');
 		let resp = await fetch(posterUrl);
 		let content = await resp.text();
+		// special thanks to 孙年忠 for the pattern (https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/116675)
+		const pattern = new RegExp(`${postFileName}.*?video_versions.*?url":("[^"]*")`, 's');
 		let match = content.match(pattern);
 		let videoUrl = JSON.parse(match[1]);
 		videoUrl = videoUrl.replace(/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/g, 'https://scontent.cdninstagram.com');
@@ -355,6 +475,9 @@
 		return videoUrl;
 	}
 
+	// ================================
+	// ====        Story           ====
+	// ================================
 	function storyOnMouseIn(target) {
 		let sectionNode = storyGetSectionNode(target);
 		let url = storyGetUrl(target, sectionNode);
@@ -366,9 +489,7 @@
 		let sectionNode = storyGetSectionNode(target);
 		let url = storyGetUrl(target, sectionNode);
 
-		// ==============================
-		// = download or open media url =
-		// ==============================
+		// download or open media url
 		if (target.getAttribute('class').includes('download-btn')) {
 			let mediaName = url
 				.split('?')[0]
@@ -454,6 +575,11 @@
 
 	// Current blob size limit is around 500MB for browsers
 	function downloadResource(url, filename) {
+		if (url.startsWith('blob:')) {
+			forceDownload(url, filename, 'mp4');
+			return;
+		}
+		console.log(url);
 		// ref: https://stackoverflow.com/questions/49474775/chrome-65-blocks-cross-origin-a-download-client-side-workaround-to-force-down
 		if (!filename)
 			filename = url
@@ -472,6 +598,7 @@
 				const extension = blob.type.split('/').pop();
 				let blobUrl = window.URL.createObjectURL(blob);
 				forceDownload(blobUrl, filename, extension);
+				console.log(blobUrl);
 			})
 			.catch(e => console.error(e));
 	}

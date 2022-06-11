@@ -3,12 +3,16 @@
 
 此腳本會在Instagram頁面上新增下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
 
-新版的程式只在Chrome上做了簡單的測試，所以如果有任何問題，歡迎與我聯繫並附上執行環境!
+新版的程式只在Chrome上做了簡單的測試，所以如果有任何問題，歡迎與我聯繫並附上執行環境與出問題的IG網址!
 
 > Note: 目前此腳本只在Windows 10 1903 64-bit上的Chrome ~~、Edge與Firefox~~ 搭配Tampermonkey測試過
 
+## 關於新的URL獲取方式
+在2022年5月左右，IG修改了網頁造成部分媒體無法下載(尤其是Reels)。從此腳本的1.13版開始增加了新的取得媒體URL的方法且預設為啟用(尚未套用在限時動態)，此方發法可以取得高解析度的圖片(待驗證)且目前所有的媒體都可以下載，但缺點是抓取URL的速度較慢(下載速度沒有影響)且可能還有些bugs，因此若不想使用新方法請將`disableNewUrlFetchMethod`設為**true**.
+
 ## 選項
 透過修改腳本開頭中的常數變數可以設定此腳本。
+* `disableNewUrlFetchMethod` : boolean, 停用新的URL獲取方法
 * `attachLink` : boolean, 設為true時，將連結加入按鈕元素中
 * `postFilenameTemplate` : string，貼文檔案的命名規則
 * `storyFilenameTemplate` : string，現實動態的檔案命名規則
@@ -29,7 +33,7 @@
 
 > 目前快捷鍵無法在Instagram主頁上使用
 
-## Contributors
+## Contributors (sort by contribution time)
 * [孙年忠](https://greasyfork.org/users/829246-%E5%AD%99%E5%B9%B4%E5%BF%A0)
 * [FlowerForWar](https://github.com/FlowerForWar)
 * [xxalexx](https://greasyfork.org/en/users/170052-xxalexx)

@@ -3,12 +3,16 @@
 
 This repository is a JavaScript for Greasemonkey/Tampermonkey. This script will add a download button and open button to your Instagram and you can download or open profile pictures, media in the posts, stories, and highlights by one click.
 
-The newer versions code only do some simple tests on Chrome. So if you have any problem, please feel free to contact me in English or Chinese and attach your runtime environment.
+The newer versions code only do some simple tests on Chrome. So if you have any problem, please feel free to contact me in English or Chinese and attach the detail information such as your runtime environment, IG post url, etc.
 
 > Note: This script only tests on Chrome ~~, Edge, and Firefox~~ with Tampermonkey on Windows 10 1903 64-bit.
 
+## About the new url fetch method
+Around May 2022, Instagram modified the web page so that some media could not be downloaded (especially Reels). From this script version 1.13, a new method of fetching media url has been added and is enabled by default (not yet applied to Story). This new method can obtain full resolution pictures (to be verified) and all media can be downloaded at present, but the disadvantage is that the speed of fetching URLs is slow (download speed has no effect) and may have some bugs. You can set `disableNewUrlFetchMethod` to **true** if you don't want to use the new method.
+
 ## Options
 This script can be configured by modifying the following constant variables in the head of this script.
+* `disableNewUrlFetchMethod` : boolean, disable new url fetch method which uses info API
 * `attachLink` : boolean, attach the link into the button elements if true
 * `postFilenameTemplate` : string, naming rule for media downloading in the post
 * `storyFilenameTemplate` : string, naming rule for media downloading in the story
@@ -29,7 +33,7 @@ This script can be configured by modifying the following constant variables in t
 
 > The shortcut keys do not work on the Instagram main page currently
 
-## Contributors
+## Contributors (sort by contribution time)
 * [孙年忠](https://greasyfork.org/users/829246-%E5%AD%99%E5%B9%B4%E5%BF%A0)
 * [FlowerForWar](https://github.com/FlowerForWar)
 * [xxalexx](https://greasyfork.org/en/users/170052-xxalexx)
