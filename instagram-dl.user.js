@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.14
+// @version             1.14.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -372,7 +372,7 @@
 		//   6. get media url from response json
 		try {
 			const appIdPattern = /"X-IG-App-ID":"([\d]+)"/
-			const mediaIdPattern = /instagram:\/\/media\?id=(\d+)/
+			const mediaIdPattern = /instagram:\/\/media\?id=(\d+)|["' ]media_id["' ]:["' ](\d+)["' ]/
 			function findAppId() {
 				let bodyScripts = document.querySelectorAll("body > script");
 				for (let i = 0; i < bodyScripts.length; ++i) {
@@ -412,21 +412,16 @@
 					return null;
 				}
 				if (!(postId in mediaIdCache)) {
-					let postUrl = `https://www.instagram.com/p/${postId}`;
-					let text = '';
-					if (window.location.href === postUrl) {
-						text = document.head.innerHTML;
-					} else {
-						if (!postUrl) return null;
-						let resp = await fetch(postUrl);
-						text = await resp.text();
-						// trim reponse text in order to reduce search time
-						text = text.substring(text.indexOf("<head>"), text.indexOf("</head>"));
-					}
-					
+					let postUrl = `https://www.instagram.com/p/${postId}/`;
+					let resp = await fetch(postUrl);
+					let text = await resp.text();
 					let idMatch = text.match(mediaIdPattern);
-					if (!idMatch) return null;
-					mediaIdCache[postId] = idMatch[1];
+					let mediaId = null;
+					for (let i = 0 ; i < idMatch.length ; ++i) {
+						if(idMatch[i]) mediaId = idMatch[i];
+					}
+					if (!mediaId) return null;
+					mediaIdCache[postId] = mediaId;
 				}
 				return mediaIdCache[postId];
 			}
@@ -607,7 +602,7 @@
 			forceDownload(url, filename, 'mp4');
 			return;
 		}
-		console.log(url);
+		console.log(`Dowloading ${url}`);
 		// ref: https://stackoverflow.com/questions/49474775/chrome-65-blocks-cross-origin-a-download-client-side-workaround-to-force-down
 		if (!filename)
 			filename = url
@@ -626,7 +621,6 @@
 				const extension = blob.type.split('/').pop();
 				let blobUrl = window.URL.createObjectURL(blob);
 				forceDownload(blobUrl, filename, extension);
-				console.log(blobUrl);
 			})
 			.catch(e => console.error(e));
 	}
