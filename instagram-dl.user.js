@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.13.1
+// @version             1.14
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -231,15 +231,15 @@
 		}
 	}
 
-	// ================================
-	// ====         Post           ====
-	// ================================
 	function profileGetUrl(target) {
 		let img = document.querySelector('header img');
 		let url = img.getAttribute('src');
 		return url;
 	}
 
+	// ================================
+	// ====         Post           ====
+	// ================================
 	async function postOnMouseIn(target) {
 		let articleNode = postGetArticleNode(target);
 		let { url } = await postGetUrl(target, articleNode);
@@ -251,9 +251,7 @@
 		let articleNode = postGetArticleNode(target);
 		let { url, mediaIndex } = await postGetUrl(target, articleNode);
 
-		// ==============================
-		// = download or open media url =
-		// ==============================
+		// download or open media url
 		if (url.length > 0) {
 			// check url
 			if (target.getAttribute('class').includes('download-btn')) {
@@ -306,7 +304,7 @@
 		if (list.length === 0) {
 			// single img or video
 			if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode);
-			if (url == null) {
+			if (url === null) {
 				if (articleNode.querySelector('article  div > video')) {
 					// media type is video
 					let videoElem = articleNode.querySelector('article  div > video');
@@ -330,7 +328,7 @@
 			mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
 
 			if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode, mediaIndex);
-			if (url == null) {
+			if (url === null) {
 				const listElements = [...articleNode.querySelectorAll(`:scope > div > div:nth-child(${postView ? 1 : 2}) > div > div:nth-child(1) ul li[style*="translateX"]`)];
 				const listElementWidth = Math.max(...listElements.map(element => element.clientWidth));
 
@@ -361,7 +359,8 @@
 		return { url, mediaIndex };
 	}
 
-	let infoCache = {};
+	let infoCache = {}; // key: media id, value: info json
+	let mediaIdCache = {}; // key: post id, value: media id
 	async function getUrlFromInfoApi(articleNode, mediaIdx = 0) {
 		// return media url if found else return null
 		// fetch flow:
@@ -387,36 +386,49 @@
 			function findPostId() {
 				const timeSelector = 'time._aaqe';
 				let nodeWalker = articleNode.querySelector(timeSelector);
-				for (let i = 0; i < 10; ++i) {
-					nodeWalker = nodeWalker.parentNode;
+				if (nodeWalker) {
+					for (let i = 0; i < 10 && nodeWalker.parentNode; ++i) {
+						nodeWalker = nodeWalker.parentNode;
+						if (nodeWalker.tagName === "A") {
+							break;
+						}
+					}
 					if (nodeWalker.tagName === "A") {
-						break;
+						let link = nodeWalker.getAttribute('href');
+						let match = link.match(postIdPattern);
+						if (match) return match[1];
 					}
 				}
-				if (nodeWalker.tagName === "A") {
-					let link = nodeWalker.getAttribute('href');
-					let match = link.match(postIdPattern);
-					if (match) return match[1];
-				}
-				console.log('Cannot find post id');
 				return null;
 			}
 
-			async function findMediaId(postId) {
-				let postUrl = `https://www.instagram.com/p/${postId}`;
-				let text = '';
-				if (window.location.href === postUrl) {
-					text = document.head.innerHTML;
-				} else {
-					if (!postUrl) return null;
-					let resp = await fetch(postUrl);
-					text = await resp.text();
-					// trim reponse text in order to reduce search time
-					text = text.substring(text.indexOf("<head>"), text.indexOf("</head>"));
+			async function findMediaId() {
+				let match = window.location.href.match(/www.instagram.com\/stories\/[^\/]+\/(\d+)/)
+				if (match) return match[1];
+
+				let postId = await findPostId();
+				if (!postId) {
+					console.log("Cannot find post id");
+					return null;
 				}
-				let idMatch = text.match(mediaIdPattern);
-				if (!idMatch) return null;
-				return idMatch[1];
+				if (!(postId in mediaIdCache)) {
+					let postUrl = `https://www.instagram.com/p/${postId}`;
+					let text = '';
+					if (window.location.href === postUrl) {
+						text = document.head.innerHTML;
+					} else {
+						if (!postUrl) return null;
+						let resp = await fetch(postUrl);
+						text = await resp.text();
+						// trim reponse text in order to reduce search time
+						text = text.substring(text.indexOf("<head>"), text.indexOf("</head>"));
+					}
+					
+					let idMatch = text.match(mediaIdPattern);
+					if (!idMatch) return null;
+					mediaIdCache[postId] = idMatch[1];
+				}
+				return mediaIdCache[postId];
 			}
 
 			function getImgOrVedioUrl(item) {
@@ -439,16 +451,22 @@
 				mode: 'cors'
 			};
 
-			let postId = await findPostId();
-			if (!(postId in infoCache)) {
-				let mediaId = await findMediaId(postId);
-				if (!mediaId) return null;
+			let mediaId = await findMediaId();
+			if (!mediaId) {
+				console.log("Cannot find media id");
+				return null;
+			}
+			if (!(mediaId in infoCache)) {
 				let url = 'https://i.instagram.com/api/v1/media/' + mediaId + '/info/';
 				let resp = await fetch(url, headers);
+				if (resp.status !== 200) {
+					console.log(`Fetch info API failed with status code: ${resp.status}`);
+					return null;
+				}
 				let respJson = await resp.json();
-				infoCache[postId] = respJson;
+				infoCache[mediaId] = respJson;
 			}
-			let infoJson = infoCache[postId];
+			let infoJson = infoCache[mediaId];
 			if ('carousel_media' in infoJson.items[0]) {
 				// multi-media post
 				return getImgOrVedioUrl(infoJson.items[0].carousel_media[mediaIdx]);
@@ -484,16 +502,16 @@
 	// ================================
 	// ====        Story           ====
 	// ================================
-	function storyOnMouseIn(target) {
+	async function storyOnMouseIn(target) {
 		let sectionNode = storyGetSectionNode(target);
-		let url = storyGetUrl(target, sectionNode);
+		let url = await storyGetUrl(target, sectionNode);
 		target.setAttribute('href', url);
 	}
 
-	function storyOnClicked(target) {
+	async function storyOnClicked(target) {
 		// extract url from target story and download or open it
 		let sectionNode = storyGetSectionNode(target);
-		let url = storyGetUrl(target, sectionNode);
+		let url = await storyGetUrl(target, sectionNode);
 
 		// download or open media url
 		if (target.getAttribute('class').includes('download-btn')) {
@@ -533,17 +551,21 @@
 		return sectionNode;
 	}
 
-	function storyGetUrl(target, sectionNode) {
-		let url = '';
-		if (sectionNode.querySelector('video > source')) {
-			url = sectionNode.querySelector('video > source').getAttribute('src');
-		} else if (sectionNode.querySelector('img[decoding="sync"]')) {
-			let img = sectionNode.querySelector('img[decoding="sync"]');
-			url = img.srcset.split(/ \d+w/g)[0].trim(); // extract first src from srcset attr. of img
-			if (url.length > 0) {
-				return url;
+	async function storyGetUrl(target, sectionNode) {
+		let url = null;
+		if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(target);
+
+		if (!url) {
+			if (sectionNode.querySelector('video > source')) {
+				url = sectionNode.querySelector('video > source').getAttribute('src');
+			} else if (sectionNode.querySelector('img[decoding="sync"]')) {
+				let img = sectionNode.querySelector('img[decoding="sync"]');
+				url = img.srcset.split(/ \d+w/g)[0].trim(); // extract first src from srcset attr. of img
+				if (url.length > 0) {
+					return url;
+				}
+				url = sectionNode.querySelector('img[decoding="sync"]').getAttribute('src');
 			}
-			url = sectionNode.querySelector('img[decoding="sync"]').getAttribute('src');
 		}
 		return url;
 	}
