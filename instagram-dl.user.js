@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.14.1
+// @version             1.15
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -34,11 +34,12 @@
 	// =================
 	// =    Options    =
 	// =================
-	// Old method is faster than new method, but not work and get highest resolution media sometime 
+	// Old method is faster than new method, but not work or unable get highest resolution media sometime 
 	const disableNewUrlFetchMethod = false;
 	const prefetchAndAttachLink = true; // add link into the button elements
 	const postFilenameTemplate = '%id%-%datetime%-%medianame%';
 	const storyFilenameTemplate = postFilenameTemplate;
+	const replaceJpegWithJpg = false;
 
 	// ==================
 
@@ -157,7 +158,7 @@
 		// add download button
 		let downloadBtn = createCustomBtn(svgDownloadBtn, iconColor, 'download-btn', '14px');
 		appendNode(node, downloadBtn);
-		
+
 		if (prefetchAndAttachLink) {
 			onMouseInHandler({ currentTarget: newtabBtn });
 			onMouseInHandler({ currentTarget: downloadBtn });
@@ -417,8 +418,8 @@
 					let text = await resp.text();
 					let idMatch = text.match(mediaIdPattern);
 					let mediaId = null;
-					for (let i = 0 ; i < idMatch.length ; ++i) {
-						if(idMatch[i]) mediaId = idMatch[i];
+					for (let i = 0; i < idMatch.length; ++i) {
+						if (idMatch[i]) mediaId = idMatch[i];
 					}
 					if (!mediaId) return null;
 					mediaIdCache[postId] = mediaId;
@@ -588,6 +589,7 @@
 	function forceDownload(blob, filename, extension) {
 		// ref: https://stackoverflow.com/questions/49474775/chrome-65-blocks-cross-origin-a-download-client-side-workaround-to-force-down
 		var a = document.createElement('a');
+		if (replaceJpegWithJpg) extension = extension.replace('jpeg', 'jpg')
 		a.download = filename + '.' + extension;
 		a.href = blob;
 		// For Firefox https://stackoverflow.com/a/32226068

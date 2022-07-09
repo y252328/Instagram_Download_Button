@@ -16,6 +16,7 @@ This script can be configured by modifying the following constant variables in t
 * `prefetchAndAttachLink` : boolean, attach the link into the button elements if true
 * `postFilenameTemplate` : string, naming rule for media downloading in the post
 * `storyFilenameTemplate` : string, naming rule for media downloading in the story
+* `replaceJpegWithJpg` : boolean, replace `.jpeg` with `.jpg` if true
 
 ## Naming Template
 * `%id%` : the poster id

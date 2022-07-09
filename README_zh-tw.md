@@ -16,6 +16,7 @@
 * `prefetchAndAttachLink` : boolean, 設為true時，將連結加入按鈕元素中
 * `postFilenameTemplate` : string，貼文檔案的命名規則
 * `storyFilenameTemplate` : string，現實動態的檔案命名規則
+* `replaceJpegWithJpg` : boolean，設為true時，將.jpeg檔改成.jpg檔
 
 ## Naming Template
 * `%id%` : 貼文者的ID
