@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.15
+// @version             1.15.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -568,11 +568,11 @@
 
 	function filenameFormat(template, id, datetime, medianame, postId = +new Date(), mediaIndex = '0') {
 		let filename = template;
-		filename = filename.replace(new RegExp('%id%', 'g'), id);
-		filename = filename.replace(new RegExp('%datetime%', 'g'), datetime);
-		filename = filename.replace(new RegExp('%medianame%', 'g'), medianame);
-		filename = filename.replace(new RegExp('%postId%', 'g'), postId)
-		filename = filename.replace(new RegExp('%mediaIndex%', 'g'), mediaIndex);
+		filename = filename.replace(/%id%/g, id);
+		filename = filename.replace(/%datetime%/g, datetime);
+		filename = filename.replace(/%medianame%/g, medianame);
+		filename = filename.replace(/%postId%/g, postId)
+		filename = filename.replace(/%mediaIndex%/g, mediaIndex);
 		return filename;
 	}
 
