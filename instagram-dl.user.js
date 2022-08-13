@@ -169,7 +169,7 @@
 		newBtn.innerHTML = svg.replace('%color', iconColor);
 		newBtn.setAttribute('class', 'custom-btn ' + className);
 		newBtn.setAttribute('target', '_blank');
-		newBtn.setAttribute('style', 'cursor: pointer;margin-left: ' + marginLeft + ';margin-top: 8px;');
+		newBtn.setAttribute('style', 'cursor: pointer;margin-left: ' + marginLeft + ';margin-top: 8px;z-index: 999;');
 		newBtn.onclick = onClickHandler;
 		if (prefetchAndAttachLink) newBtn.onmouseenter = onMouseInHandler;
 		if (className.includes('newtab')) {
