@@ -35,11 +35,11 @@ This script can be configured by modifying the following constant variables in t
 > The shortcut keys do not work on the Instagram main page currently
 
 ## Known Issues
+* Shortcut doesn't work in newer versions
 * May get lower resolution Story media
 
-## Contributors (sort by contribution time)
+## Contributors who aren't listed in the [GitHub contributors list](https://github.com/y252328/Instagram_Download_Button/graphs/contributors) (sort by contribution time)
 * [孙年忠](https://greasyfork.org/users/829246-%E5%AD%99%E5%B9%B4%E5%BF%A0)
-* [FlowerForWar](https://github.com/FlowerForWar)
 * [xxalexx](https://greasyfork.org/en/users/170052-xxalexx)
 
 ## Preview

@@ -35,11 +35,11 @@
 > 目前快捷鍵無法在Instagram主頁上使用
 
 ## 已知問題
+* 新版本中快捷鍵無法使用
 * 有時會下載到較低畫質的限時動態
 
-## Contributors (sort by contribution time)
+## 未列在[GitHub contributors list](https://github.com/y252328/Instagram_Download_Button/graphs/contributors)的Contributors (sort by contribution time)
 * [孙年忠](https://greasyfork.org/users/829246-%E5%AD%99%E5%B9%B4%E5%BF%A0)
-* [FlowerForWar](https://github.com/FlowerForWar)
 * [xxalexx](https://greasyfork.org/en/users/170052-xxalexx)
 
 ## 預覽

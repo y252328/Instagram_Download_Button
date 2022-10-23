@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.15.1
+// @version             1.15.2
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -561,6 +561,8 @@
                     return url;
                 }
                 url = sectionNode.querySelector('img[decoding="sync"]').getAttribute('src');
+            } else if (sectionNode.querySelector('video')) {
+                url = sectionNode.querySelector('video').getAttribute('src');
             }
         }
         return url;
