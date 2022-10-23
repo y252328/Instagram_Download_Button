@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.15.2
+// @version             1.15.3
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -76,10 +76,16 @@
     function keyDownHandler(event) {
         if (window.location.href === 'https://www.instagram.com/') return;
 
+        const mockEventTemplate = {
+            stopPropagation: function(){},
+            preventDefault: function(){}
+        };
+
         if (event.altKey && event.key === 'k') {
             let buttons = document.getElementsByClassName('download-btn');
             if (buttons.length > 0) {
-                let mockEvent = { currentTarget: buttons[buttons.length - 1] };
+                let mockEvent = { ...mockEventTemplate };
+                mockEvent.currentTarget = buttons[buttons.length - 1];
                 if (prefetchAndAttachLink) onMouseInHandler(mockEvent);
                 onClickHandler(mockEvent);
             }
@@ -87,7 +93,8 @@
         if (event.altKey && event.key === 'i') {
             let buttons = document.getElementsByClassName('newtab-btn');
             if (buttons.length > 0) {
-                let mockEvent = { currentTarget: buttons[buttons.length - 1] };
+                let mockEvent = { ...mockEventTemplate };
+                mockEvent.currentTarget = buttons[buttons.length - 1];
                 if (prefetchAndAttachLink) onMouseInHandler(mockEvent);
                 onClickHandler(mockEvent);
             }
