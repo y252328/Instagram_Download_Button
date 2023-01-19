@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.15.4
+// @version             1.15.5
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -53,7 +53,7 @@
     const storyFilenameTemplate = postFilenameTemplate;
     // ==================
 
-    const postIdPattern = /^\/p\/([^/]+)\//;
+    const postIdPattern = /^\/p\/([^/]+)\/$/;
     function yyyymmdd(date) {
         // ref: https://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object?page=1&tab=votes#tab-top
         var mm = date.getMonth() + 1; // getMonth() is zero-based
@@ -87,8 +87,8 @@
         if (window.location.href === 'https://www.instagram.com/') return;
 
         const mockEventTemplate = {
-            stopPropagation: function(){},
-            preventDefault: function(){}
+            stopPropagation: function () { },
+            preventDefault: function () { }
         };
 
         if (event.altKey && event.key === 'k') {
@@ -265,44 +265,45 @@
     }
 
     async function postOnClicked(target) {
-        // extract url from target post and download or open it
-        let articleNode = postGetArticleNode(target);
-        let { url, mediaIndex } = await postGetUrl(target, articleNode);
+        try {
+            // extract url from target post and download or open it
+            let articleNode = postGetArticleNode(target);
+            let { url, mediaIndex } = await postGetUrl(target, articleNode);
 
-        // download or open media url
-        if (url.length > 0) {
-            // check url
-            if (target.getAttribute('class').includes('download-btn')) {
-                let mediaName = url
-                    .split('?')[0]
-                    .split('\\')
-                    .pop()
-                    .split('/')
-                    .pop();
-                mediaName = mediaName.substring(0, mediaName.lastIndexOf('.'));
-                let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
-                datetime =
-                    yyyymmdd(datetime) +
-                    '_' +
-                    datetime
-                        .toTimeString()
-                        .split(' ')[0]
-                        .replace(/:/g, '');
-                let posterName = articleNode
-                    .querySelector('header a')
-                    .getAttribute('href')
-                    .replace(/\//g, '');
-                let postId = articleNode
-                    .querySelector('a time')
-                    .closest('a')
-                    .getAttribute('href')
-                    .match(postIdPattern)[1];
-                let filename = filenameFormat(postFilenameTemplate, posterName, datetime, mediaName, postId, mediaIndex);
-                downloadResource(url, filename);
-            } else {
-                // open url in new tab
-                openResource(url);
+            // download or open media url
+            if (url.length > 0) {
+                // check url
+                if (target.getAttribute('class').includes('download-btn')) {
+                    let mediaName = url
+                        .split('?')[0]
+                        .split('\\')
+                        .pop()
+                        .split('/')
+                        .pop();
+                    mediaName = mediaName.substring(0, mediaName.lastIndexOf('.'));
+                    let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
+                    datetime =
+                        yyyymmdd(datetime) +
+                        '_' +
+                        datetime
+                            .toTimeString()
+                            .split(' ')[0]
+                            .replace(/:/g, '');
+                    let posterName = articleNode
+                        .querySelector('header a')
+                        .getAttribute('href')
+                        .replace(/\//g, '');
+                    let postId = findPostId(articleNode);
+                    let filename = filenameFormat(postFilenameTemplate, posterName, datetime, mediaName, postId, mediaIndex);
+                    downloadResource(url, filename);
+                } else {
+                    // open url in new tab
+                    openResource(url);
+                }
             }
+        } catch (e) {
+            console.log(`Uncatched in postOnClicked(): ${e}\n${e.stack}`);
+            return null;
         }
     }
 
@@ -401,30 +402,11 @@
                 return null;
             }
 
-            function findPostId() {
-                const timeSelector = 'time._aaqe';
-                let nodeWalker = articleNode.querySelector(timeSelector);
-                if (nodeWalker) {
-                    for (let i = 0; i < 10 && nodeWalker.parentNode; ++i) {
-                        nodeWalker = nodeWalker.parentNode;
-                        if (nodeWalker.tagName === "A") {
-                            break;
-                        }
-                    }
-                    if (nodeWalker.tagName === "A") {
-                        let link = nodeWalker.getAttribute('href');
-                        let match = link.match(postIdPattern);
-                        if (match) return match[1];
-                    }
-                }
-                return null;
-            }
-
             async function findMediaId() {
                 let match = window.location.href.match(/www.instagram.com\/stories\/[^\/]+\/(\d+)/)
                 if (match) return match[1];
 
-                let postId = await findPostId();
+                let postId = await findPostId(articleNode);
                 if (!postId) {
                     console.log("Cannot find post id");
                     return null;
@@ -491,6 +473,18 @@
             console.log(`Uncatched in getUrlFromInfoApi(): ${e}\n${e.stack}`);
             return null;
         }
+    }
+
+    function findPostId(articleNode) {
+        let aNodes = articleNode.querySelectorAll('a');
+        for (let i = 0; i < aNodes.length; ++i) {
+            let link = aNodes[i].getAttribute('href');
+            if (link) {
+                let match = link.match(postIdPattern);
+                if (match) return match[1];
+            }
+        }
+        return null;
     }
 
     async function fetchVideoURL(articleNode, videoElem) {
