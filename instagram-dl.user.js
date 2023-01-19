@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.15.3
+// @version             1.15.4
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -24,9 +24,14 @@
 // @description:ru      Добавьте кнопки для загрузки или открытия медиа
 // @author              ZhiYu
 // @match               https://www.instagram.com/*
+// @icon                https://www.google.com/s2/favicons?sz=64&domain=instagram.com
 // @grant               none
 // @license             MIT
 // ==/UserScript==
+
+// TODO:
+//  Shortcut for opening the picture on a background tab (issues/25)
+//  Date format (issues/26)
 
 (function () {
     'use strict';
@@ -37,10 +42,15 @@
     // Old method is faster than new method, but not work or unable get highest resolution media sometime 
     const disableNewUrlFetchMethod = false;
     const prefetchAndAttachLink = true; // add link into the button elements
+    const replaceJpegWithJpg = false;
+    // === Placeholders ===
+    // %id% : the poster id
+    // %datetime% : the media upload time
+    // %medianame% : the original media file name
+    // %postId% : the post id
+    // %mediaIndex% : the media index in multiple-media posts
     const postFilenameTemplate = '%id%-%datetime%-%medianame%';
     const storyFilenameTemplate = postFilenameTemplate;
-    const replaceJpegWithJpg = false;
-
     // ==================
 
     const postIdPattern = /^\/p\/([^/]+)\//;
