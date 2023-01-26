@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.15.5
+// @version             1.16.0
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -43,7 +43,7 @@
     const disableNewUrlFetchMethod = false;
     const prefetchAndAttachLink = true; // add link into the button elements
     const replaceJpegWithJpg = false;
-    // === Placeholders ===
+    // === File name placeholders ===
     // %id% : the poster id
     // %datetime% : the media upload time
     // %medianame% : the original media file name
@@ -51,16 +51,17 @@
     // %mediaIndex% : the media index in multiple-media posts
     const postFilenameTemplate = '%id%-%datetime%-%medianame%';
     const storyFilenameTemplate = postFilenameTemplate;
+    // === Datetime placeholders ===
+    // %y%: year (4 digits)
+    // %m%: month (01-12)
+    // %d%: day (01-31)
+    // %H%: hour (00-23)
+    // %M%: min (00-59)
+    // %S%: sec (00-59)
+    const datetimeTemplate = '%y%%m%%d%_%H%%M%%S%';
     // ==================
 
     const postIdPattern = /^\/p\/([^/]+)\/$/;
-    function yyyymmdd(date) {
-        // ref: https://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object?page=1&tab=votes#tab-top
-        var mm = date.getMonth() + 1; // getMonth() is zero-based
-        var dd = date.getDate();
-
-        return [date.getFullYear(), (mm > 9 ? '' : '0') + mm, (dd > 9 ? '' : '0') + dd].join('');
-    }
 
     var svgDownloadBtn = `<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="24" width="24"
      viewBox="0 0 477.867 477.867" style="fill:%color;" xml:space="preserve">
@@ -282,13 +283,6 @@
                         .pop();
                     mediaName = mediaName.substring(0, mediaName.lastIndexOf('.'));
                     let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
-                    datetime =
-                        yyyymmdd(datetime) +
-                        '_' +
-                        datetime
-                            .toTimeString()
-                            .split(' ')[0]
-                            .replace(/:/g, '');
                     let posterName = articleNode
                         .querySelector('header a')
                         .getAttribute('href')
@@ -530,13 +524,6 @@
                 .pop();
             mediaName = mediaName.substring(0, mediaName.lastIndexOf('.'));
             let datetime = new Date(sectionNode.querySelector('time').getAttribute('datetime'));
-            datetime =
-                yyyymmdd(datetime) +
-                '_' +
-                datetime
-                    .toTimeString()
-                    .split(' ')[0]
-                    .replace(/:/g, '');
             let posterName = sectionNode
                 .querySelector('header a')
                 .getAttribute('href')
@@ -582,11 +569,29 @@
     function filenameFormat(template, id, datetime, medianame, postId = +new Date(), mediaIndex = '0') {
         let filename = template;
         filename = filename.replace(/%id%/g, id);
-        filename = filename.replace(/%datetime%/g, datetime);
+        filename = filename.replace(/%datetime%/g, datetimeFormat(datetimeTemplate, datetime));
         filename = filename.replace(/%medianame%/g, medianame);
         filename = filename.replace(/%postId%/g, postId)
         filename = filename.replace(/%mediaIndex%/g, mediaIndex);
         return filename;
+    }
+
+    function datetimeFormat(template, datetime) {
+        let datetimeStr = template;
+        datetimeStr = datetimeStr.replace(/%y%/g, datetime.getFullYear());
+        datetimeStr = datetimeStr.replace(/%m%/g, fillZero((datetime.getMonth() + 1).toString()));
+        datetimeStr = datetimeStr.replace(/%d%/g, fillZero(datetime.getDate().toString()));
+        datetimeStr = datetimeStr.replace(/%H%/g, fillZero(datetime.getHours().toString()));
+        datetimeStr = datetimeStr.replace(/%M%/g, fillZero(datetime.getMinutes().toString()));
+        datetimeStr = datetimeStr.replace(/%S%/g, fillZero(datetime.getSeconds().toString()));
+        return datetimeStr;
+    }
+
+    function fillZero(str) {
+        if (str.length === 1) {
+            return '0' + str;
+        }
+        return str;
     }
 
     function openResource(url) {

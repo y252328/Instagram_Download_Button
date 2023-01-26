@@ -20,11 +20,19 @@ This script can be configured by modifying the following constant variables in t
 
 ## Naming Template
 * `%id%` : the poster id
-* `%datetime%` : the media upload time
+* `%datetime%` : the media upload time, see next section for the datatime format
 * `%medianame%` : the original media file name
 * `%postId%` : the post id
 * `%mediaIndex%` : the media index in multiple-media posts
 * ~~`%ext%` : the file extension of media~~
+
+## Datetime Template
+* `%y%` : year (4 digits)
+* `%m%` : month (01-12)
+* `%d%` : day (01-31)
+* `%H%` : hour (00-23)
+* `%M%` : min (00-59)
+* `%S%` : sec (00-59)
 
 ## Shortcut Keys (May not work in newer versions)
 * `Alt` + `i` : Open the media in the new tab
