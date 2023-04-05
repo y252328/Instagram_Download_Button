@@ -334,7 +334,7 @@
             // multiple imgs or videos
             const postView = location.pathname.startsWith('/p/');
             let dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${postView ? 1 : 2}) > div > div:nth-child(2)`).children];
-            let mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
+            mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
             if (mediaIndex === null) {
               dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${!postView ? 1 : 2}) > div > div:nth-child(2)`).children];
               mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
