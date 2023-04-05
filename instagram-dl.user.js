@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.16.0
+// @version             1.16.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -28,10 +28,6 @@
 // @grant               none
 // @license             MIT
 // ==/UserScript==
-
-// TODO:
-//  Shortcut for opening the picture on a background tab (issues/25)
-//  Date format (issues/26)
 
 (function () {
     'use strict';
@@ -337,8 +333,13 @@
         } else {
             // multiple imgs or videos
             const postView = location.pathname.startsWith('/p/');
-            const dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${postView ? 1 : 2}) > div > div:nth-child(2)`).children];
-            mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
+            let dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${postView ? 1 : 2}) > div > div:nth-child(2)`).children];
+            let mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
+            if (mediaIndex === null) {
+              dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${!postView ? 1 : 2}) > div > div:nth-child(2)`).children];
+              mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
+            }
+            if (mediaIndex === null) throw 'Cannot find the media index';
 
             if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode, mediaIndex);
             if (url === null) {
@@ -350,8 +351,6 @@
                     const position = Math.round(Number(element.style.transform.match(/-?(\d+)/)[1]) / listElementWidth);
                     return { ...result, [position]: element };
                 }, {});
-
-                console.log({ dotsElements, listElements, listElementWidth, positionsMap });
 
                 const node = positionsMap[mediaIndex];
                 if (node.querySelector('video')) {
