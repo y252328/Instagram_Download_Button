@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.16.1
+// @version             1.16.2
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -37,7 +37,7 @@
     // =================
     // Old method is faster than new method, but not work or unable get highest resolution media sometime 
     const disableNewUrlFetchMethod = false;
-    const prefetchAndAttachLink = true; // add link into the button elements
+    const prefetchAndAttachLink = false; // add link into the button elements
     const replaceJpegWithJpg = false;
     // === File name placeholders ===
     // %id% : the poster id

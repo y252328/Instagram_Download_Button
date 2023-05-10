@@ -7,6 +7,9 @@
 
 > Note: 目前此腳本只在Windows 10 1903 64-bit上的Chrome ~~、Edge與Firefox~~ 搭配Tampermonkey測試過
 
+## 注意
+* 有多個使用者回報，過度下載可能會使帳號被Instagram封鎖。請勿短時間內下載太多次。
+
 ## 關於新的URL獲取方式
 在2022年5月左右，IG修改了網頁造成部分媒體無法下載(尤其是Reels)。從此腳本的1.13版開始增加了新的取得媒體URL的方法且預設為啟用(尚未套用在限時動態)，此方發法可以取得高解析度的圖片(待驗證)且目前所有的媒體都可以下載，但缺點是抓取URL的速度較慢(下載速度沒有影響)且可能還有些bugs，因此若不想使用新方法請將`disableNewUrlFetchMethod`設為**true**或是開啟`prefetchAndAttachLink`來預先載入url資訊。
 
