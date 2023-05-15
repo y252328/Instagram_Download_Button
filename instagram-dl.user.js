@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.16.2
+// @version             1.17.0
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -38,6 +38,7 @@
     // Old method is faster than new method, but not work or unable get highest resolution media sometime 
     const disableNewUrlFetchMethod = false;
     const prefetchAndAttachLink = false; // add link into the button elements
+    const hoverToFetchAndAttachLink = true;
     const replaceJpegWithJpg = false;
     // === File name placeholders ===
     // %id% : the poster id
@@ -93,7 +94,7 @@
             if (buttons.length > 0) {
                 let mockEvent = { ...mockEventTemplate };
                 mockEvent.currentTarget = buttons[buttons.length - 1];
-                if (prefetchAndAttachLink) onMouseInHandler(mockEvent);
+                if (prefetchAndAttachLink || hoverToFetchAndAttachLink) onMouseInHandler(mockEvent);
                 onClickHandler(mockEvent);
             }
         }
@@ -102,7 +103,7 @@
             if (buttons.length > 0) {
                 let mockEvent = { ...mockEventTemplate };
                 mockEvent.currentTarget = buttons[buttons.length - 1];
-                if (prefetchAndAttachLink) onMouseInHandler(mockEvent);
+                if (prefetchAndAttachLink || hoverToFetchAndAttachLink) onMouseInHandler(mockEvent);
                 onClickHandler(mockEvent);
             }
         }
@@ -186,7 +187,7 @@
         newBtn.setAttribute('target', '_blank');
         newBtn.setAttribute('style', 'cursor: pointer;margin-left: ' + marginLeft + ';margin-top: 8px;z-index: 999;');
         newBtn.onclick = onClickHandler;
-        if (prefetchAndAttachLink) newBtn.onmouseenter = onMouseInHandler;
+        if (hoverToFetchAndAttachLink) newBtn.onmouseenter = onMouseInHandler;
         if (className.includes('newtab')) {
             newBtn.setAttribute('title', 'Open in new tab');
         } else {
@@ -211,7 +212,7 @@
 
     function onMouseInHandler(e) {
         let target = e.currentTarget;
-        if (!prefetchAndAttachLink) return;
+        if (!prefetchAndAttachLink && !hoverToFetchAndAttachLink) return;
         if (window.location.pathname.includes('stories')) {
             storyOnMouseIn(target);
         } else if (document.querySelector('header') && document.querySelector('header').contains(target)) {
