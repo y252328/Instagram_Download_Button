@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.0
+// @version             1.17.1
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -59,6 +59,7 @@
     // ==================
 
     const postIdPattern = /^\/p\/([^/]+)\/$/;
+    const postUrlPattern = /www\.instagram\.com\/p\/\w+\//;
 
     var svgDownloadBtn = `<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="24" width="24"
      viewBox="0 0 477.867 477.867" style="fill:%color;" xml:space="preserve">
@@ -125,6 +126,10 @@
         }
     }
 
+    function isPostPage() {
+        return Boolean(window.location.href.match(postUrlPattern))
+    }
+
     var checkExistTimer = setInterval(function () {
         let sharePostSelector = 'article section span button';
         let storySelector = 'header button > div';
@@ -132,13 +137,6 @@
         // Thanks for Jenie providing color check code
         // https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/122185
         let iconColor = getComputedStyle(document.body).backgroundColor === 'rgb(0, 0, 0)' ? 'white' : 'black';
-
-        // check profile
-        if (document.getElementsByClassName('custom-btn').length === 0) {
-            if (document.querySelector(profileSelector)) {
-                addCustomBtn(document.querySelector(profileSelector), iconColor, append2Header);
-            }
-        }
 
         // check post
         let articleList = document.querySelectorAll('article');
@@ -148,12 +146,30 @@
             }
         }
 
+        // check independent post page
+        if (isPostPage()) {
+            let btn = document.querySelector('button:has(polygon[points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334"])')
+            if (document.getElementsByClassName('custom-btn').length === 0) {
+                if (btn.parentNode.querySelector('button')) {
+                    addCustomBtn(btn.parentNode.querySelector('button'), iconColor, append2Post);
+                }
+            }
+        }
+
+        // check profile
+        if (document.getElementsByClassName('custom-btn').length === 0) {
+            if (document.querySelector(profileSelector)) {
+                addCustomBtn(document.querySelector(profileSelector), iconColor, append2Header);
+            }
+        }
+
         // check story
         if (document.getElementsByClassName('custom-btn').length === 0) {
             if (document.querySelector(storySelector)) {
                 addCustomBtn(document.querySelector(storySelector), 'white', append2Post);
             }
         }
+
     }, 500);
 
     function append2Header(node, btn) {
@@ -300,7 +316,7 @@
 
     function postGetArticleNode(target) {
         let articleNode = target;
-        while (articleNode && articleNode.tagName !== 'ARTICLE') {
+        while (articleNode && articleNode.tagName !== 'ARTICLE' && articleNode.tagName !== 'MAIN') {
             articleNode = articleNode.parentNode;
         }
         return articleNode;
