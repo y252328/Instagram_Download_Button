@@ -17,6 +17,7 @@ Around May 2022, Instagram modified the web page so that some media could not be
 This script can be configured by modifying the following constant variables in the head of this script.
 * `disableNewUrlFetchMethod` : boolean, disable new url fetch method which uses info API
 * `prefetchAndAttachLink` : boolean, attach the link into the button elements if true
+* `hoverToFetchAndAttachLink` : boolean, fetch and add link when hover the button
 * `postFilenameTemplate` : string, naming rule for media downloading in the post
 * `storyFilenameTemplate` : string, naming rule for media downloading in the story
 * `replaceJpegWithJpg` : boolean, replace `.jpeg` with `.jpg` if true

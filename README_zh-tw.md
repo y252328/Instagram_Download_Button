@@ -15,8 +15,9 @@
 
 ## 選項
 透過修改腳本開頭中的常數變數可以設定此腳本。
-* `disableNewUrlFetchMethod` : boolean, 停用新的URL獲取方法
-* `prefetchAndAttachLink` : boolean, 設為true時，將連結加入按鈕元素中
+* `disableNewUrlFetchMethod` : boolean，停用新的URL獲取方法
+* `prefetchAndAttachLink` : boolean，設為true時，將自動抓取連結並加入按鈕元素中
+* `hoverToFetchAndAttachLink` : boolean，設為true且鼠標移到按鈕上時，將抓取連結並加入按鈕元素中
 * `postFilenameTemplate` : string，貼文檔案的命名規則
 * `storyFilenameTemplate` : string，現實動態的檔案命名規則
 * `replaceJpegWithJpg` : boolean，設為true時，將.jpeg檔改成.jpg檔

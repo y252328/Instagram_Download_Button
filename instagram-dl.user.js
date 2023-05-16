@@ -37,8 +37,8 @@
     // =================
     // Old method is faster than new method, but not work or unable get highest resolution media sometime 
     const disableNewUrlFetchMethod = false;
-    const prefetchAndAttachLink = false; // add link into the button elements
-    const hoverToFetchAndAttachLink = true;
+    const prefetchAndAttachLink = false; // prefetch and add link into the button elements
+    const hoverToFetchAndAttachLink = true;  // fetch and add link when hover the button
     const replaceJpegWithJpg = false;
     // === File name placeholders ===
     // %id% : the poster id
