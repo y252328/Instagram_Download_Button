@@ -47,7 +47,6 @@
 > 目前快捷鍵無法在Instagram主頁上使用
 
 ## 已知問題
-* 新版本中快捷鍵無法使用
 * 有時會下載到較低畫質的限時動態
 
 ## 未列在[GitHub contributors list](https://github.com/y252328/Instagram_Download_Button/graphs/contributors)的Contributors (sort by contribution time)

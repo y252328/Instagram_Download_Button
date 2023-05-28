@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.1
+// @version             1.17.2
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -59,7 +59,7 @@
     // ==================
 
     const postIdPattern = /^\/p\/([^/]+)\/$/;
-    const postUrlPattern = /www\.instagram\.com\/p\/\w+\//;
+    const postUrlPattern = /instagram\.com\/p\/[\w-]+\//;
 
     var svgDownloadBtn = `<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="24" width="24"
      viewBox="0 0 477.867 477.867" style="fill:%color;" xml:space="preserve">
@@ -352,9 +352,9 @@
             const postView = location.pathname.startsWith('/p/');
             let dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${postView ? 1 : 2}) > div > div:nth-child(2)`).children];
             let mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
-            if (mediaIndex === null) {
-              dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${!postView ? 1 : 2}) > div > div:nth-child(2)`).children];
-              mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
+            if (mediaIndex === null && postView) {
+                dotsElements = [...articleNode.querySelectorAll(`div._acnb`)];
+                mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
             }
             if (mediaIndex === null) throw 'Cannot find the media index';
 
