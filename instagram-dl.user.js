@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.2
+// @version             1.17.3
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -35,7 +35,7 @@
     // =================
     // =    Options    =
     // =================
-    // Old method is faster than new method, but not work or unable get highest resolution media sometime 
+    // Old method is faster than new method, but not work or unable get highest resolution media sometime
     const disableNewUrlFetchMethod = false;
     const prefetchAndAttachLink = false; // prefetch and add link into the button elements
     const hoverToFetchAndAttachLink = true;  // fetch and add link when hover the button
@@ -58,7 +58,7 @@
     const datetimeTemplate = '%y%%m%%d%_%H%%M%%S%';
     // ==================
 
-    const postIdPattern = /^\/p\/([^/]+)\/$/;
+    const postIdPattern = /^\/p\/([^/]+)\//;
     const postUrlPattern = /instagram\.com\/p\/[\w-]+\//;
 
     var svgDownloadBtn = `<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="24" width="24"
@@ -394,7 +394,7 @@
         // return media url if found else return null
         // fetch flow:
         //	 1. find post id
-        //   2. use step1 post id to send request to get post page 
+        //   2. use step1 post id to send request to get post page
         //   3. find media id from the reponse text of step2
         //   4. find app id in clicked page
         //   5. send info api request with media id and app id
