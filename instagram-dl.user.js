@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.3
+// @version             1.17.4
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -28,6 +28,9 @@
 // @grant               none
 // @license             MIT
 // ==/UserScript==
+
+// TO-DO:
+//   - replace the checking timer with the observer
 
 (function () {
     'use strict';
@@ -131,9 +134,11 @@
     }
 
     var checkExistTimer = setInterval(function () {
-        let sharePostSelector = 'article section span button';
-        let storySelector = 'header button > div';
-        let profileSelector = 'header section svg circle';
+        const sharePostSelector = 'article section span button';
+        // share post selector 2: for new feed page, added from v1.17.4 on 11 Jun. 2023
+        const sharePostSelector2 = 'article button:has(svg[height="24"] path[d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"])';
+        const storySelector = 'header button > div';
+        const profileSelector = 'header section svg circle';
         // Thanks for Jenie providing color check code
         // https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/122185
         let iconColor = getComputedStyle(document.body).backgroundColor === 'rgb(0, 0, 0)' ? 'white' : 'black';
@@ -141,8 +146,9 @@
         // check post
         let articleList = document.querySelectorAll('article');
         for (let i = 0; i < articleList.length; i++) {
-            if (articleList[i].querySelector(sharePostSelector) && articleList[i].getElementsByClassName('custom-btn').length === 0) {
-                addCustomBtn(articleList[i].querySelector(sharePostSelector), iconColor, append2Post);
+            let buttonAnchor = articleList[i].querySelector(sharePostSelector) || articleList[i].querySelector(sharePostSelector2);
+            if (buttonAnchor && articleList[i].getElementsByClassName('custom-btn').length === 0) {
+                addCustomBtn(buttonAnchor, iconColor, append2Post);
             }
         }
 
@@ -296,10 +302,8 @@
                         .pop();
                     mediaName = mediaName.substring(0, mediaName.lastIndexOf('.'));
                     let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
-                    let posterName = articleNode
-                        .querySelector('header a')
-                        .getAttribute('href')
-                        .replace(/\//g, '');
+                    let posterName = articleNode.querySelector('header a') || findPostName(articleNode);
+                    posterName = posterName.getAttribute('href').replace(/\//g, '');
                     let postId = findPostId(articleNode);
                     let filename = filenameFormat(postFilenameTemplate, posterName, datetime, mediaName, postId, mediaIndex);
                     downloadResource(url, filename);
@@ -350,12 +354,8 @@
         } else {
             // multiple imgs or videos
             const postView = location.pathname.startsWith('/p/');
-            let dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${postView ? 1 : 2}) > div > div:nth-child(2)`).children];
+            let dotsElements = [...articleNode.querySelectorAll(`div._acnb`)];
             let mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
-            if (mediaIndex === null && postView) {
-                dotsElements = [...articleNode.querySelectorAll(`div._acnb`)];
-                mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
-            }
             if (mediaIndex === null) throw 'Cannot find the media index';
 
             if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode, mediaIndex);
@@ -482,6 +482,17 @@
         } catch (e) {
             console.log(`Uncatched in getUrlFromInfoApi(): ${e}\n${e.stack}`);
             return null;
+        }
+    }
+
+    function findPostName(articleNode) {
+        const imgAlt = articleNode.querySelector('canvas ~ * img').getAttribute('alt');
+        let links = articleNode.querySelectorAll('a');
+        for (let i = 0; i < links.length; i++) {
+            const posterName = links[i].getAttribute('href').replace(/\//g, '');
+            if (imgAlt.includes(posterName)) {
+                return links[i];
+            }
         }
     }
 

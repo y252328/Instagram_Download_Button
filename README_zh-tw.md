@@ -10,6 +10,11 @@
 ## 注意
 * 有多個使用者回報，過度下載可能會使帳號被Instagram封鎖。請勿短時間內下載太多次。
 
+## 已知問題
+* 在收藏的貼文上可能無法正常運作
+* 版本1.17.4後，Firefox上需要啟用`has` selector的功能才能正常運作
+* 有時會下載到較低畫質的限時動態
+
 ## 關於新的URL獲取方式
 在2022年5月左右，IG修改了網頁造成部分媒體無法下載(尤其是Reels)。從此腳本的1.13版開始增加了新的取得媒體URL的方法且預設為啟用(尚未套用在限時動態)，此方發法可以取得高解析度的圖片(待驗證)且目前所有的媒體都可以下載，但缺點是抓取URL的速度較慢(下載速度沒有影響)且可能還有些bugs，因此若不想使用新方法請將`disableNewUrlFetchMethod`設為**true**或是開啟`prefetchAndAttachLink`來預先載入url資訊。
 
@@ -45,9 +50,6 @@
 * `Alt` + `l` : 向後一個圖片/影片 (多圖貼文中)
 
 > 目前快捷鍵無法在Instagram主頁上使用
-
-## 已知問題
-* 有時會下載到較低畫質的限時動態
 
 ## 未列在[GitHub contributors list](https://github.com/y252328/Instagram_Download_Button/graphs/contributors)的Contributors (sort by contribution time)
 * [孙年忠](https://greasyfork.org/users/829246-%E5%AD%99%E5%B9%B4%E5%BF%A0)
