@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.4
+// @version             1.17.6
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -133,11 +133,23 @@
         return Boolean(window.location.href.match(postUrlPattern))
     }
 
+    function queryHas(root, selector, has) {
+        let nodes = root.querySelectorAll(selector);
+        for (let i = 0; i < nodes.length; ++i) {
+            let currentNode = nodes[i];
+            if (currentNode.querySelector(has)) {
+                return currentNode;
+            }
+        }
+        return null;
+    }
+
     var checkExistTimer = setInterval(function () {
         const sharePostSelector = 'article section span button';
         // share post selector 2: for new feed page, added from v1.17.4 on 11 Jun. 2023
-        const sharePostSelector2 = 'article button:has(svg[height="24"] path[d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"])';
-        const storySelector = 'header button > div';
+        const sharePostSelector2 = 'article button';
+        const sharePostSelector2Has = 'svg[height="24"] path[d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"]';
+        const storySelector = 'header svg';
         const profileSelector = 'header section svg circle';
         // Thanks for Jenie providing color check code
         // https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/122185
@@ -146,7 +158,7 @@
         // check post
         let articleList = document.querySelectorAll('article');
         for (let i = 0; i < articleList.length; i++) {
-            let buttonAnchor = articleList[i].querySelector(sharePostSelector) || articleList[i].querySelector(sharePostSelector2);
+            let buttonAnchor = articleList[i].querySelector(sharePostSelector) || queryHas(articleList[i], sharePostSelector2, sharePostSelector2Has);
             if (buttonAnchor && articleList[i].getElementsByClassName('custom-btn').length === 0) {
                 addCustomBtn(buttonAnchor, iconColor, append2Post);
             }
@@ -154,7 +166,7 @@
 
         // check independent post page
         if (isPostPage()) {
-            let btn = document.querySelector('button:has(polygon[points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334"])')
+            let btn = queryHas(document, 'button', 'polygon[points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334"]');
             if (document.getElementsByClassName('custom-btn').length === 0) {
                 if (btn.parentNode.querySelector('button')) {
                     addCustomBtn(btn.parentNode.querySelector('button'), iconColor, append2Post);
@@ -172,7 +184,8 @@
         // check story
         if (document.getElementsByClassName('custom-btn').length === 0) {
             if (document.querySelector(storySelector)) {
-                addCustomBtn(document.querySelector(storySelector), 'white', append2Post);
+                let buttonDiv = document.querySelector(storySelector).parentNode;
+                addCustomBtn(buttonDiv, 'white', append2Post);
             }
         }
 
