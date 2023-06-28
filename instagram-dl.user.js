@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.1
+// @version             1.17.2
 // @compatible          chrome
 // @compatible          firefox
 // @compatible          edge
@@ -35,7 +35,7 @@
     // =================
     // =    Options    =
     // =================
-    // Old method is faster than new method, but not work or unable get highest resolution media sometime 
+    // Old method is faster than new method, but not work or unable get highest resolution media sometime
     const disableNewUrlFetchMethod = false;
     const prefetchAndAttachLink = false; // prefetch and add link into the button elements
     const hoverToFetchAndAttachLink = true;  // fetch and add link when hover the button
@@ -131,8 +131,8 @@
     }
 
     var checkExistTimer = setInterval(function () {
-        let sharePostSelector = 'article section span button';
-        let storySelector = 'header button > div';
+        let savePostSelector = 'article section ._aamz';
+        let storySelector = 'header ._ac0m > div:last-child';
         let profileSelector = 'header section svg circle';
         // Thanks for Jenie providing color check code
         // https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/122185
@@ -141,18 +141,16 @@
         // check post
         let articleList = document.querySelectorAll('article');
         for (let i = 0; i < articleList.length; i++) {
-            if (articleList[i].querySelector(sharePostSelector) && articleList[i].getElementsByClassName('custom-btn').length === 0) {
-                addCustomBtn(articleList[i].querySelector(sharePostSelector), iconColor, append2Post);
+            if (articleList[i].querySelector(savePostSelector) && articleList[i].getElementsByClassName('custom-btn').length === 0) {
+                addCustomBtn(articleList[i].querySelector(savePostSelector), iconColor, append2Post);
             }
         }
 
         // check independent post page
         if (isPostPage()) {
-            let btn = document.querySelector('button:has(polygon[points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334"])')
+            let btn = document.getElementsByClassName('x11i5rnm x1gryazu')[0];
             if (document.getElementsByClassName('custom-btn').length === 0) {
-                if (btn.parentNode.querySelector('button')) {
-                    addCustomBtn(btn.parentNode.querySelector('button'), iconColor, append2Post);
-                }
+                addCustomBtn(btn, iconColor, append2IndependentPostPage);
             }
         }
 
@@ -166,17 +164,25 @@
         // check story
         if (document.getElementsByClassName('custom-btn').length === 0) {
             if (document.querySelector(storySelector)) {
-                addCustomBtn(document.querySelector(storySelector), 'white', append2Post);
+                addCustomBtn(document.querySelector(storySelector), 'white', append2StoryPost);
             }
         }
 
     }, 500);
 
+    function append2Post(node, btn) {
+        node.parentNode.appendChild(btn);
+    }
+
+    function append2IndependentPostPage(node, btn) {
+        node.firstElementChild.firstElementChild.firstElementChild.appendChild(btn);
+    }
+
     function append2Header(node, btn) {
         node.parentNode.parentNode.parentNode.appendChild(btn, node.parentNode.parentNode);
     }
 
-    function append2Post(node, btn) {
+    function append2StoryPost(node, btn) {
         node.parentNode.parentNode.appendChild(btn);
     }
 
@@ -394,7 +400,7 @@
         // return media url if found else return null
         // fetch flow:
         //	 1. find post id
-        //   2. use step1 post id to send request to get post page 
+        //   2. use step1 post id to send request to get post page
         //   3. find media id from the reponse text of step2
         //   4. find app id in clicked page
         //   5. send info api request with media id and app id
