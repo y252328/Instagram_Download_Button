@@ -146,7 +146,7 @@
 
     var checkExistTimer = setInterval(function () {
         const buttonsPostSelector = 'article section span div[role="button"]:not([style])';
-        const storySelector = 'header svg';
+        const storySelector = 'header svg:not([aria-label=""])';
         const profileSelector = 'header section svg circle';
         // Thanks for Jenie providing color check code
         // https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/122185
