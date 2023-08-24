@@ -8,10 +8,12 @@ The newer versions code only do some simple tests on Chrome. So if you have any 
 > Note: This script only tests on Chrome ~~, Edge, and Firefox~~ with Tampermonkey on Windows 10 1903 64-bit.
 
 ## Caution
+* Some user feedback that account be logged out when this script is enabled, please disable this script if you meet a similar issue.
 * There is some feedback provided by users that Instagram will block your account for a few hours (maybe longer) if you download too much media in a short time. So please mind the download number.
 * Doesn't support reels page (i.e., `https://www.instagram.com/reels/`)
 
 ## Issues
+* May be loged out when this script enabled
 * May break the layout
 * May not work on in private account post due to no share button 
 * May not work with saved posts
