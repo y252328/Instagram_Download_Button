@@ -155,7 +155,7 @@
         // check post
         let articleList = document.querySelectorAll('article');
         for (let i = 0; i < articleList.length; i++) {
-            let buttonAnchor = articleList[i].querySelector(savePostSelector);
+            let buttonAnchor = (Array.from(articleList[i].querySelectorAll(savePostSelector))).pop();
             if (buttonAnchor && articleList[i].getElementsByClassName('custom-btn').length === 0) {
                 addCustomBtn(buttonAnchor, iconColor, append2Post);
             }
@@ -166,7 +166,7 @@
             let savebtn = queryHas(document, 'div[role="button"] > div[role="button"]:not([style])', 'polygon[points="20 21 12 13.44 4 21 4 3 20 3 20 21"]') || queryHas(document, 'div[role="button"] > div[role="button"]:not([style])', 'path[d="M20 22a.999.999 0 0 1-.687-.273L12 14.815l-7.313 6.912A1 1 0 0 1 3 21V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1Z"]');
             if (document.getElementsByClassName('custom-btn').length === 0) {
                 if (savebtn.parentNode.querySelector('svg')) {
-                    addCustomBtn(savebtn.parentNode.querySelector('svg'), iconColor, append2Post2);
+                    addCustomBtn(savebtn.parentNode.querySelector('svg'), iconColor, append2IndependentPost);
                 }
             }
         }
@@ -181,23 +181,27 @@
         // check story
         if (document.getElementsByClassName('custom-btn').length === 0) {
             if (document.querySelector(storySelector)) {
-                let buttonDiv = document.querySelector(storySelector).parentNode;
-                addCustomBtn(buttonDiv, 'white', append2Post2);
+                let buttonDiv = Array.from(document.querySelectorAll(storySelector)).pop().parentNode;
+                addCustomBtn(buttonDiv, 'white', append2Story);
             }
         }
 
     }, 500);
 
+    function append2Post(node, btn) {
+        node.append(btn);
+    }
+
+    function append2IndependentPost(node, btn) {
+        node.parentNode.parentNode.append(btn);
+    }
+
     function append2Header(node, btn) {
         node.parentNode.parentNode.parentNode.appendChild(btn, node.parentNode.parentNode);
     }
 
-    function append2Post(node, btn) {
-        node.appendChild(btn);
-    }
-
-    function append2Post2(node, btn) {
-        node.parentNode.parentNode.appendChild(btn);
+    function append2Story(node, btn) {
+        node.parentNode.parentNode.parentNode.append(btn);
     }
 
     function addCustomBtn(node, iconColor, appendNode) {
