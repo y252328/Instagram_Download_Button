@@ -9,10 +9,8 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.8
+// @version             1.17.9
 // @compatible          chrome
-// @compatible          firefox
-// @compatible          edge
 // @description         Add the download button and the open button to download or open profile picture and media in the posts, stories, and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
 // @description:zh-CN   在Instagram页面加入下载按钮与开启按钮，透过这些按钮可以下载或开启大头贴与贴文、限时动态、Highlight中的照片或影片

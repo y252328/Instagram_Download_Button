@@ -1,6 +1,8 @@
 # Instagram Download Button
 [Github](https://github.com/y252328/Instagram_Download_Button), [Greasy Fork](https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button) ~~, [OpenUserJS](https://openuserjs.org/scripts/y252328/Instagram_Download_Button)~~
 
+**Instagram經常改變他們的前端，但我現在專注在正職工作上。所以如果這個腳本因Instagram網頁更改而無法使用，我可能無法在短時間內修復該腳本。感謝你的耐心等待。**
+
 此腳本會在Instagram頁面上新增下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
 
 新版的程式只在Chrome上做了簡單的測試，所以如果有任何問題，歡迎與我聯繫並附上執行環境與出問題的IG網址!
