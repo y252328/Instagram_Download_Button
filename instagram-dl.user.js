@@ -112,7 +112,7 @@
 
         if (event.altKey && event.key === 'l') {
             // right arrow
-            let buttons = document.getElementsByClassName('coreSpriteRightChevron');
+            let buttons = document.getElementsByClassName('_9zm2');
             if (buttons.length > 0) {
                 buttons[0].click();
             }
@@ -120,7 +120,7 @@
 
         if (event.altKey && event.key === 'j') {
             // left arrow
-            let buttons = document.getElementsByClassName('coreSpriteLeftChevron');
+            let buttons = document.getElementsByClassName('_9zm0');
             if (buttons.length > 0) {
                 buttons[0].click();
             }
@@ -143,7 +143,7 @@
     }
 
     var checkExistTimer = setInterval(function () {
-        const savePostSelector = 'article div:not([class])>div[role="button"]:not([style])';
+        const savePostSelector = 'article *:not(li)>*>*>*>div:not([class])>div[role="button"]:not([style])';
         const storySelector = 'section > *:not(main) header div>svg:not([aria-label=""])';
         const profileSelector = 'header section svg circle';
         // Thanks for Jenie providing color check code
@@ -544,7 +544,7 @@
     }
 
     // ================================
-    // ====        Story           ====
+    // ====   Story & Highlight    ====
     // ================================
     async function storyOnMouseIn(target) {
         let sectionNode = storyGetSectionNode(target);
