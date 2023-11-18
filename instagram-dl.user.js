@@ -504,13 +504,22 @@
     }
 
     function findPostName(articleNode) {
-        const imgAlt = articleNode.querySelector('canvas ~ * img').getAttribute('alt');
-        let links = articleNode.querySelectorAll('a');
-        for (let i = 0; i < links.length; i++) {
-            const posterName = links[i].getAttribute('href').replace(/\//g, '');
-            if (imgAlt.includes(posterName)) {
-                return links[i];
+        // videos are handled differently
+        let imgAlt = articleNode.querySelector('canvas ~ * img')
+        if (imgAlt)
+        {
+            imgAlt = imgAlt.getAttribute('alt');
+            let links = articleNode.querySelectorAll('a');
+            for (let i = 0; i < links.length; i++) {
+                const posterName = links[i].getAttribute('href').replace(/\//g, '');
+                if (imgAlt.includes(posterName)) {
+                    return links[i];
+                }
             }
+        } else {
+            // first H2 with a direction set
+            const el = document.querySelector('h2[dir]');
+            return el.innerText;
         }
     }
 
