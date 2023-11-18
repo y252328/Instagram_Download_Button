@@ -353,9 +353,9 @@
             // single img or video
             if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode);
             if (url === null) {
-                if (articleNode.querySelector('article  div > video')) {
+                let videoElem = articleNode.querySelector('video');
+                if (videoElem) {
                     // media type is video
-                    let videoElem = articleNode.querySelector('article  div > video');
                     url = videoElem.getAttribute('src');
                     if (videoElem.hasAttribute('videoURL')) {
                         url = videoElem.getAttribute('videoURL');
@@ -373,7 +373,7 @@
             // multiple imgs or videos
             const postView = location.pathname.startsWith('/p/');
             let dotsElements = [...articleNode.querySelectorAll(`div._acnb`)];
-            let mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
+            mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
             if (mediaIndex === null) throw 'Cannot find the media index';
 
             if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode, mediaIndex);
@@ -443,6 +443,7 @@
                     let postUrl = `https://www.instagram.com/p/${postId}/`;
                     let resp = await fetch(postUrl);
                     let text = await resp.text();
+                    console.log(`Searching for media ID in: ${text}`);
                     let idMatch = text.match(mediaIdPattern);
                     let mediaId = null;
                     for (let i = 0; i < idMatch.length; ++i) {
