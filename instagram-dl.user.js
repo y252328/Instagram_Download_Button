@@ -679,6 +679,7 @@
         }
         fetch(url, {
             headers: new Headers({
+                'User-Agent': window.navigator.userAgent,
                 Origin: location.origin,
             }),
             mode: 'cors',
