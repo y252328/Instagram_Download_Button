@@ -9,10 +9,8 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.16.1
+// @version             1.17.10
 // @compatible          chrome
-// @compatible          firefox
-// @compatible          edge
 // @description         Add the download button and the open button to download or open profile picture and media in the posts, stories, and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
 // @description:zh-CN   在Instagram页面加入下载按钮与开启按钮，透过这些按钮可以下载或开启大头贴与贴文、限时动态、Highlight中的照片或影片
@@ -29,15 +27,19 @@
 // @license             MIT
 // ==/UserScript==
 
+// TO-DO:
+//   - replace the checking timer with the observer
+
 (function () {
     'use strict';
 
     // =================
     // =    Options    =
     // =================
-    // Old method is faster than new method, but not work or unable get highest resolution media sometime 
+    // Old method is faster than new method, but not work or unable get highest resolution media sometime
     const disableNewUrlFetchMethod = false;
-    const prefetchAndAttachLink = true; // add link into the button elements
+    const prefetchAndAttachLink = false; // prefetch and add link into the button elements
+    const hoverToFetchAndAttachLink = true;  // fetch and add link when hover the button
     const replaceJpegWithJpg = false;
     // === File name placeholders ===
     // %id% : the poster id
@@ -57,7 +59,8 @@
     const datetimeTemplate = '%y%%m%%d%_%H%%M%%S%';
     // ==================
 
-    const postIdPattern = /^\/p\/([^/]+)\/$/;
+    const postIdPattern = /^\/p\/([^/]+)\//;
+    const postUrlPattern = /instagram\.com\/p\/[\w-]+\//;
 
     var svgDownloadBtn = `<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="24" width="24"
      viewBox="0 0 477.867 477.867" style="fill:%color;" xml:space="preserve">
@@ -93,7 +96,7 @@
             if (buttons.length > 0) {
                 let mockEvent = { ...mockEventTemplate };
                 mockEvent.currentTarget = buttons[buttons.length - 1];
-                if (prefetchAndAttachLink) onMouseInHandler(mockEvent);
+                if (prefetchAndAttachLink || hoverToFetchAndAttachLink) onMouseInHandler(mockEvent);
                 onClickHandler(mockEvent);
             }
         }
@@ -102,14 +105,14 @@
             if (buttons.length > 0) {
                 let mockEvent = { ...mockEventTemplate };
                 mockEvent.currentTarget = buttons[buttons.length - 1];
-                if (prefetchAndAttachLink) onMouseInHandler(mockEvent);
+                if (prefetchAndAttachLink || hoverToFetchAndAttachLink) onMouseInHandler(mockEvent);
                 onClickHandler(mockEvent);
             }
         }
 
         if (event.altKey && event.key === 'l') {
             // right arrow
-            let buttons = document.getElementsByClassName('coreSpriteRightChevron');
+            let buttons = document.getElementsByClassName('_9zm2');
             if (buttons.length > 0) {
                 buttons[0].click();
             }
@@ -117,20 +120,56 @@
 
         if (event.altKey && event.key === 'j') {
             // left arrow
-            let buttons = document.getElementsByClassName('coreSpriteLeftChevron');
+            let buttons = document.getElementsByClassName('_9zm0');
             if (buttons.length > 0) {
                 buttons[0].click();
             }
         }
     }
 
+    function isPostPage() {
+        return Boolean(window.location.href.match(postUrlPattern))
+    }
+
+    function queryHas(root, selector, has) {
+        let nodes = root.querySelectorAll(selector);
+        for (let i = 0; i < nodes.length; ++i) {
+            let currentNode = nodes[i];
+            if (currentNode.querySelector(has)) {
+                return currentNode;
+            }
+        }
+        return null;
+    }
+
     var checkExistTimer = setInterval(function () {
-        let sharePostSelector = 'article section span button';
-        let storySelector = 'header button > div';
-        let profileSelector = 'header section svg circle';
+        const savePostSelector = 'article *:not(li)>*>*>*>div:not([class])>div[role="button"]:not([style])';
+        const storySelector = 'section > *:not(main) header div>svg:not([aria-label=""])';
+        const profileSelector = 'header section svg circle';
+        const playSvgPathSelector = 'path[d="M5.888 22.5a3.46 3.46 0 0 1-1.721-.46l-.003-.002a3.451 3.451 0 0 1-1.72-2.982V4.943a3.445 3.445 0 0 1 5.163-2.987l12.226 7.059a3.444 3.444 0 0 1-.001 5.967l-12.22 7.056a3.462 3.462 0 0 1-1.724.462Z"]';
+        const pauseSvgPathSelector = 'path[d="M15 1c-3.3 0-6 1.3-6 3v40c0 1.7 2.7 3 6 3s6-1.3 6-3V4c0-1.7-2.7-3-6-3zm18 0c-3.3 0-6 1.3-6 3v40c0 1.7 2.7 3 6 3s6-1.3 6-3V4c0-1.7-2.7-3-6-3z"]';
         // Thanks for Jenie providing color check code
         // https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/122185
         let iconColor = getComputedStyle(document.body).backgroundColor === 'rgb(0, 0, 0)' ? 'white' : 'black';
+
+        // check post
+        let articleList = document.querySelectorAll('article');
+        for (let i = 0; i < articleList.length; i++) {
+            let buttonAnchor = (Array.from(articleList[i].querySelectorAll(savePostSelector))).pop();
+            if (buttonAnchor && articleList[i].getElementsByClassName('custom-btn').length === 0) {
+                addCustomBtn(buttonAnchor, iconColor, append2Post);
+            }
+        }
+
+        // check independent post page
+        if (isPostPage()) {
+            let savebtn = queryHas(document, 'div[role="button"] > div[role="button"]:not([style])', 'polygon[points="20 21 12 13.44 4 21 4 3 20 3 20 21"]') || queryHas(document, 'div[role="button"] > div[role="button"]:not([style])', 'path[d="M20 22a.999.999 0 0 1-.687-.273L12 14.815l-7.313 6.912A1 1 0 0 1 3 21V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1Z"]');
+            if (document.getElementsByClassName('custom-btn').length === 0) {
+                if (savebtn.parentNode.querySelector('svg')) {
+                    addCustomBtn(savebtn.parentNode.querySelector('svg'), iconColor, append2IndependentPost);
+                }
+            }
+        }
 
         // check profile
         if (document.getElementsByClassName('custom-btn').length === 0) {
@@ -139,28 +178,30 @@
             }
         }
 
-        // check post
-        let articleList = document.querySelectorAll('article');
-        for (let i = 0; i < articleList.length; i++) {
-            if (articleList[i].querySelector(sharePostSelector) && articleList[i].getElementsByClassName('custom-btn').length === 0) {
-                addCustomBtn(articleList[i].querySelector(sharePostSelector), iconColor, append2Post);
-            }
-        }
-
         // check story
         if (document.getElementsByClassName('custom-btn').length === 0) {
-            if (document.querySelector(storySelector)) {
-                addCustomBtn(document.querySelector(storySelector), 'white', append2Post);
+            let playPauseSvg = queryHas(document, 'svg', playSvgPathSelector) || queryHas(document, 'svg', pauseSvgPathSelector);
+            if (playPauseSvg) {
+                let buttonDiv = playPauseSvg.parentNode;
+                addCustomBtn(buttonDiv, 'white', append2Story);
             }
         }
     }, 500);
+
+    function append2Post(node, btn) {
+        node.append(btn);
+    }
+
+    function append2IndependentPost(node, btn) {
+        node.parentNode.parentNode.append(btn);
+    }
 
     function append2Header(node, btn) {
         node.parentNode.parentNode.parentNode.appendChild(btn, node.parentNode.parentNode);
     }
 
-    function append2Post(node, btn) {
-        node.parentNode.parentNode.appendChild(btn);
+    function append2Story(node, btn) {
+        node.parentNode.parentNode.parentNode.append(btn);
     }
 
     function addCustomBtn(node, iconColor, appendNode) {
@@ -186,7 +227,7 @@
         newBtn.setAttribute('target', '_blank');
         newBtn.setAttribute('style', 'cursor: pointer;margin-left: ' + marginLeft + ';margin-top: 8px;z-index: 999;');
         newBtn.onclick = onClickHandler;
-        if (prefetchAndAttachLink) newBtn.onmouseenter = onMouseInHandler;
+        if (hoverToFetchAndAttachLink) newBtn.onmouseenter = onMouseInHandler;
         if (className.includes('newtab')) {
             newBtn.setAttribute('title', 'Open in new tab');
         } else {
@@ -211,7 +252,7 @@
 
     function onMouseInHandler(e) {
         let target = e.currentTarget;
-        if (!prefetchAndAttachLink) return;
+        if (!prefetchAndAttachLink && !hoverToFetchAndAttachLink) return;
         if (window.location.pathname.includes('stories')) {
             storyOnMouseIn(target);
         } else if (document.querySelector('header') && document.querySelector('header').contains(target)) {
@@ -279,10 +320,8 @@
                         .pop();
                     mediaName = mediaName.substring(0, mediaName.lastIndexOf('.'));
                     let datetime = new Date(articleNode.querySelector('time').getAttribute('datetime'));
-                    let posterName = articleNode
-                        .querySelector('header a')
-                        .getAttribute('href')
-                        .replace(/\//g, '');
+                    let posterName = articleNode.querySelector('header a') || findPostName(articleNode);
+                    posterName = posterName.getAttribute('href').replace(/\//g, '');
                     let postId = findPostId(articleNode);
                     let filename = filenameFormat(postFilenameTemplate, posterName, datetime, mediaName, postId, mediaIndex);
                     downloadResource(url, filename);
@@ -299,7 +338,7 @@
 
     function postGetArticleNode(target) {
         let articleNode = target;
-        while (articleNode && articleNode.tagName !== 'ARTICLE') {
+        while (articleNode && articleNode.tagName !== 'ARTICLE' && articleNode.tagName !== 'MAIN') {
             articleNode = articleNode.parentNode;
         }
         return articleNode;
@@ -333,12 +372,8 @@
         } else {
             // multiple imgs or videos
             const postView = location.pathname.startsWith('/p/');
-            let dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${postView ? 1 : 2}) > div > div:nth-child(2)`).children];
+            let dotsElements = [...articleNode.querySelectorAll(`div._acnb`)];
             mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
-            if (mediaIndex === null) {
-              dotsElements = [...articleNode.querySelector(`:scope > div > div:nth-child(${!postView ? 1 : 2}) > div > div:nth-child(2)`).children];
-              mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
-            }
             if (mediaIndex === null) throw 'Cannot find the media index';
 
             if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode, mediaIndex);
@@ -377,7 +412,7 @@
         // return media url if found else return null
         // fetch flow:
         //	 1. find post id
-        //   2. use step1 post id to send request to get post page 
+        //   2. use step1 post id to send request to get post page
         //   3. find media id from the reponse text of step2
         //   4. find app id in clicked page
         //   5. send info api request with media id and app id
@@ -468,6 +503,17 @@
         }
     }
 
+    function findPostName(articleNode) {
+        const imgAlt = articleNode.querySelector('canvas ~ * img').getAttribute('alt');
+        let links = articleNode.querySelectorAll('a');
+        for (let i = 0; i < links.length; i++) {
+            const posterName = links[i].getAttribute('href').replace(/\//g, '');
+            if (imgAlt.includes(posterName)) {
+                return links[i];
+            }
+        }
+    }
+
     function findPostId(articleNode) {
         let aNodes = articleNode.querySelectorAll('a');
         for (let i = 0; i < aNodes.length; ++i) {
@@ -500,7 +546,7 @@
     }
 
     // ================================
-    // ====        Story           ====
+    // ====   Story & Highlight    ====
     // ================================
     async function storyOnMouseIn(target) {
         let sectionNode = storyGetSectionNode(target);
