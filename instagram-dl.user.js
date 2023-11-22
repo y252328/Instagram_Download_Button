@@ -373,7 +373,7 @@
             // multiple imgs or videos
             const postView = location.pathname.startsWith('/p/');
             let dotsElements = [...articleNode.querySelectorAll(`div._acnb`)];
-            let mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
+            mediaIndex = [...dotsElements].reduce((result, element, index) => (element.classList.length === 2 ? index : result), null);
             if (mediaIndex === null) throw 'Cannot find the media index';
 
             if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode, mediaIndex);
