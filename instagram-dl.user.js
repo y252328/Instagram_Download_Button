@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.10
+// @version             1.17.11
 // @compatible          chrome
 // @description         Add the download button and the open button to download or open profile picture and media in the posts, stories, and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
@@ -81,6 +81,8 @@
     <path d="m465.016 0h-344.456c-9.52 0-17.223 7.703-17.223 17.223v86.114h-86.114c-9.52 0-17.223 7.703-17.223 17.223v344.456c0 9.52 7.703 17.223 17.223 17.223h344.456c9.52 0 17.223-7.703 17.223-17.223v-86.114h86.114c9.52 0 17.223-7.703 17.223-17.223v-344.456c0-9.52-7.703-17.223-17.223-17.223zm-120.56 447.793h-310.01v-310.01h310.011v310.01zm103.337-103.337h-68.891v-223.896c0-9.52-7.703-17.223-17.223-17.223h-223.896v-68.891h310.011v310.01z"/>
 </svg>`;
 
+    var preUrl = "";
+
     document.addEventListener('keydown', keyDownHandler);
 
     function keyDownHandler(event) {
@@ -143,6 +145,7 @@
     }
 
     var checkExistTimer = setInterval(function () {
+        const curUrl = window.location.href;
         const savePostSelector = 'article *:not(li)>*>*>*>div:not([class])>div[role="button"]:not([style])';
         const storySelector = 'section > *:not(main) header div>svg:not([aria-label=""])';
         const profileSelector = 'header section svg circle';
@@ -151,6 +154,13 @@
         // Thanks for Jenie providing color check code
         // https://greasyfork.org/zh-TW/scripts/406535-instagram-download-button/discussions/122185
         let iconColor = getComputedStyle(document.body).backgroundColor === 'rgb(0, 0, 0)' ? 'white' : 'black';
+
+        // clear all custom buttons when url changing
+        if (preUrl !== curUrl) {
+            while (document.getElementsByClassName('custom-btn').length !== 0) {
+                document.getElementsByClassName('custom-btn')[0].remove();
+            }
+        }
 
         // check post
         let articleList = document.querySelectorAll('article');
@@ -172,7 +182,7 @@
         }
 
         // check profile
-        if (document.getElementsByClassName('custom-btn').length === 0) {
+        if (document.getElementsByClassName('custom-btn').length === 0 && !curUrl.includes("stor")) {
             if (document.querySelector(profileSelector)) {
                 addCustomBtn(document.querySelector(profileSelector), iconColor, append2Header);
             }
@@ -186,6 +196,8 @@
                 addCustomBtn(buttonDiv, 'white', append2Story);
             }
         }
+
+        preUrl = curUrl;
     }, 500);
 
     function append2Post(node, btn) {
