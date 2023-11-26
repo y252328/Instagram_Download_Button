@@ -365,9 +365,9 @@
             // single img or video
             if (!disableNewUrlFetchMethod) url = await getUrlFromInfoApi(articleNode);
             if (url === null) {
-                if (articleNode.querySelector('article  div > video')) {
+                let videoElem = articleNode.querySelector('video');
+                if (videoElem) {
                     // media type is video
-                    let videoElem = articleNode.querySelector('article  div > video');
                     url = videoElem.getAttribute('src');
                     if (videoElem.hasAttribute('videoURL')) {
                         url = videoElem.getAttribute('videoURL');
@@ -465,6 +465,7 @@
                     let postUrl = `https://www.instagram.com/p/${postId}/`;
                     let resp = await fetch(postUrl);
                     let text = await resp.text();
+                    console.log(`Searching for media ID in: ${text}`);
                     let idMatch = text.match(mediaIdPattern);
                     let mediaId = null;
                     for (let i = 0; i < idMatch.length; ++i) {
@@ -709,6 +710,7 @@
         }
         fetch(url, {
             headers: new Headers({
+                'User-Agent': window.navigator.userAgent,
                 Origin: location.origin,
             }),
             mode: 'cors',
