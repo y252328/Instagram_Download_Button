@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.11
+// @version             1.17.12
 // @compatible          chrome
 // @description         Add the download button and the open button to download or open profile picture and media in the posts, stories, and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
@@ -443,14 +443,24 @@
             }
 
             async function findMediaId() {
-                let match = window.location.href.match(/www.instagram.com\/stories\/[^\/]+\/(\d+)/)
+                // method 1
+                let match = window.location.href.match(/www.instagram.com\/stories\/[^\/]+\/(\d+)/);
                 if (match) return match[1];
 
+                // method 2
+                let scriptJson = document.querySelectorAll('script[type="application/json"]');
+                for (let i = 0; i < scriptJson.length; i++) {
+                    let match = scriptJson[i].text.match(/"pk":"(\d+)","id":"[\d_]+"/);
+                    if (match) return match[1];
+                }
+
+                // method 3
                 let postId = await findPostId(articleNode);
                 if (!postId) {
                     console.log("Cannot find post id");
                     return null;
                 }
+
                 if (!(postId in mediaIdCache)) {
                     let postUrl = `https://www.instagram.com/p/${postId}/`;
                     let resp = await fetch(postUrl);
