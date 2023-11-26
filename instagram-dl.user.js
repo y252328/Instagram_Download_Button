@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.12
+// @version             1.17.14
 // @compatible          chrome
 // @description         Add the download button and the open button to download or open profile picture and media in the posts, stories, and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
@@ -130,7 +130,7 @@
     }
 
     function isPostPage() {
-        return Boolean(window.location.href.match(postUrlPattern))
+        return Boolean(window.location.href.match(postUrlPattern));
     }
 
     function queryHas(root, selector, has) {
@@ -430,8 +430,8 @@
         //   5. send info api request with media id and app id
         //   6. get media url from response json
         try {
-            const appIdPattern = /"X-IG-App-ID":"([\d]+)"/
-            const mediaIdPattern = /instagram:\/\/media\?id=(\d+)|["' ]media_id["' ]:["' ](\d+)["' ]/
+            const appIdPattern = /"X-IG-App-ID":"([\d]+)"/;
+            const mediaIdPattern = /instagram:\/\/media\?id=(\d+)|["' ]media_id["' ]:["' ](\d+)["' ]/;
             function findAppId() {
                 let bodyScripts = document.querySelectorAll("body > script");
                 for (let i = 0; i < bodyScripts.length; ++i) {
@@ -528,9 +528,8 @@
 
     function findPostName(articleNode) {
         // videos are handled differently
-        let imgAlt = articleNode.querySelector('canvas ~ * img')
-        if (imgAlt)
-        {
+        let imgAlt = articleNode.querySelector('canvas ~ * img');
+        if (imgAlt) {
             imgAlt = imgAlt.getAttribute('alt');
             let links = articleNode.querySelectorAll('a');
             for (let i = 0; i < links.length; i++) {
@@ -648,7 +647,7 @@
         filename = filename.replace(/%id%/g, id);
         filename = filename.replace(/%datetime%/g, datetimeFormat(datetimeTemplate, datetime));
         filename = filename.replace(/%medianame%/g, medianame);
-        filename = filename.replace(/%postId%/g, postId)
+        filename = filename.replace(/%postId%/g, postId);
         filename = filename.replace(/%mediaIndex%/g, mediaIndex);
         return filename;
     }
@@ -684,7 +683,7 @@
     function forceDownload(blob, filename, extension) {
         // ref: https://stackoverflow.com/questions/49474775/chrome-65-blocks-cross-origin-a-download-client-side-workaround-to-force-down
         var a = document.createElement('a');
-        if (replaceJpegWithJpg) extension = extension.replace('jpeg', 'jpg')
+        if (replaceJpegWithJpg) extension = extension.replace('jpeg', 'jpg');
         a.download = filename + '.' + extension;
         a.href = blob;
         // For Firefox https://stackoverflow.com/a/32226068

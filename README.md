@@ -15,6 +15,7 @@ The newer versions code only do some simple tests on Chrome. So if you have any 
 * Doesn't support reels page (i.e., `https://www.instagram.com/reels/`)
 
 ## Issues
+* Sometimes may not work on the main feed
 * May be loged out when this script enabled
 * May break the layout
 * May not work on in private account post due to no share button 

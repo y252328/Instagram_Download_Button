@@ -15,6 +15,7 @@
 * 不支援連續短片頁面 (即`https://www.instagram.com/reels/`)
 
 ## 已知問題
+* 有時在主頁面時，按鈕可能無法正常工作
 * 在啟用此script可能會被強制登出
 * 在某些時候會造成跑版
 * 在沒有分享按鈕的地方會無法正常運作(如private account post)
