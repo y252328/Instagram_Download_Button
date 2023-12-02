@@ -450,8 +450,10 @@
                 // method 2
                 let scriptJson = document.querySelectorAll('script[type="application/json"]');
                 for (let i = 0; i < scriptJson.length; i++) {
-                    let match = scriptJson[i].text.match(/"pk":"(\d+)","id":"[\d_]+"/);
-                    if (match) return match[1];
+                    if (window.location.href.match(/www.instagram.com\/stories\/[^\/]+\/(\d+)/)) {
+                        let match = scriptJson[i].text.match(/"pk":"(\d+)","id":"[\d_]+"/);
+                        if (match) return match[1];
+                    }
                 }
 
                 // method 3
