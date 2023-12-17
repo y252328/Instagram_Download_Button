@@ -15,12 +15,13 @@ The newer versions code only do some simple tests on Chrome. So if you have any 
 * Doesn't support reels page (i.e., `https://www.instagram.com/reels/`)
 
 ## Issues
+* Cannot download media in person story (https://www.instagram.com/stories/XXX/YYY/) and independent post (https://www.instagram.com/p/XXX/)
 * Sometimes may not work on the main feed
 * May be loged out when this script enabled
 * May break the layout
 * May not work on in private account post due to no share button 
 * May not work with saved posts
-* May get lower resolution Story media
+* May get lower resolution media
 
 ## About the new url fetch method
 Around May 2022, Instagram modified the web page so that some media could not be downloaded (especially Reels). From this script version 1.13, a new method of fetching media url has been added and is enabled by default (not yet applied to Story). This new method can obtain full resolution pictures (to be verified) and all media can be downloaded at present, but the disadvantage is that the speed of fetching URLs is slow (download speed has no effect) and may have some bugs. You can set `disableNewUrlFetchMethod` to **true** if you don't want to use the new method. Or you can set `prefetchAndAttachLink` to **true** in order to prefetch the URL info.

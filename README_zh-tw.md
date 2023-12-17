@@ -15,12 +15,13 @@
 * 不支援連續短片頁面 (即`https://www.instagram.com/reels/`)
 
 ## 已知問題
+* 在個人頁面限動(https://www.instagram.com/stories/XXX/YYY/)或獨立的貼文(https://www.instagram.com/p/XXX/)中下載無法正常工作
 * 有時在主頁面時，按鈕可能無法正常工作
 * 在啟用此script可能會被強制登出
 * 在某些時候會造成跑版
 * 在沒有分享按鈕的地方會無法正常運作(如private account post)
 * 在收藏的貼文上可能無法正常運作
-* 有時會下載到較低畫質的限時動態
+* 有時會下載到較低畫質的檔案
 
 ## 關於新的URL獲取方式
 在2022年5月左右，IG修改了網頁造成部分媒體無法下載(尤其是Reels)。從此腳本的1.13版開始增加了新的取得媒體URL的方法且預設為啟用(尚未套用在限時動態)，此方發法可以取得高解析度的圖片(待驗證)且目前所有的媒體都可以下載，但缺點是抓取URL的速度較慢(下載速度沒有影響)且可能還有些bugs，因此若不想使用新方法請將`disableNewUrlFetchMethod`設為**true**或是開啟`prefetchAndAttachLink`來預先載入url資訊。
