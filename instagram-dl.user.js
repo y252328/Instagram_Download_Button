@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.15
+// @version             1.17.16
 // @compatible          chrome
 // @description         Add the download button and the open button to download or open profile picture and media in the posts, stories, and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
@@ -394,7 +394,6 @@
                 const listElementWidth = Math.max(...listElements.map(element => element.clientWidth));
 
                 const positionsMap = listElements.reduce((result, element) => {
-                    // console.log(Number(element.style.transform.match(/-?(\d+)/)[1]));
                     const position = Math.round(Number(element.style.transform.match(/-?(\d+)/)[1]) / listElementWidth);
                     return { ...result, [position]: element };
                 }, {});
@@ -595,22 +594,26 @@
         // extract url from target story and download or open it
         let sectionNode = storyGetSectionNode(target);
         let url = await storyGetUrl(target, sectionNode);
-
+        const posterUrlPat = /\/stories\/(.*)\/.*\//
         // download or open media url
         if (target.getAttribute('class').includes('download-btn')) {
-            let mediaName = url
-                .split('?')[0]
-                .split('\\')
-                .pop()
-                .split('/')
-                .pop();
+            let mediaName = url.split('?')[0].split('\\').pop().split('/').pop();
             mediaName = mediaName.substring(0, mediaName.lastIndexOf('.'));
             let datetime = new Date(sectionNode.querySelector('time').getAttribute('datetime'));
-            let posterName = sectionNode
-                .querySelector('header a')
-                .getAttribute('href')
-                .replace(/\//g, '');
+            let posterName = "unkown";
+            // method 1
+            const posterNameHeader = sectionNode.querySelector('header a');
+            if (posterNameHeader) {
+                posterName = posterNameHeader.getAttribute('href').replace(/\//g, '');
+            }
 
+            // method 2
+            if (posterName === "unkown") {
+                const match = window.location.pathname.match(posterUrlPat);
+                if (match) {
+                    posterName = match[1];
+                }
+            }
             let filename = filenameFormat(storyFilenameTemplate, posterName, datetime, mediaName);
             downloadResource(url, filename);
         } else {

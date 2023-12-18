@@ -15,7 +15,7 @@ The newer versions code only do some simple tests on Chrome. So if you have any 
 * Doesn't support reels page (i.e., `https://www.instagram.com/reels/`)
 
 ## Issues
-* Cannot download media in person story (https://www.instagram.com/stories/XXX/YYY/) and independent post (https://www.instagram.com/p/XXX/)
+* Cannot download media in independent post (https://www.instagram.com/p/XXX/)
 * Sometimes may not work on the main feed
 * May be loged out when this script enabled
 * May break the layout

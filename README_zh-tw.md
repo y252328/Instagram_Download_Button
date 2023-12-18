@@ -15,7 +15,7 @@
 * 不支援連續短片頁面 (即`https://www.instagram.com/reels/`)
 
 ## 已知問題
-* 在個人頁面限動(https://www.instagram.com/stories/XXX/YYY/)或獨立的貼文(https://www.instagram.com/p/XXX/)中下載無法正常工作
+* 在獨立的貼文頁面(https://www.instagram.com/p/XXX/)中下載按鈕無法正常工作
 * 有時在主頁面時，按鈕可能無法正常工作
 * 在啟用此script可能會被強制登出
 * 在某些時候會造成跑版
