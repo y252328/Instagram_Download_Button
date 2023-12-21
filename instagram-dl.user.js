@@ -93,7 +93,7 @@
             preventDefault: function () { }
         };
 
-        if (event.altKey && event.key === 'k') {
+        if (event.altKey && event.code === 'KeyK') {
             let buttons = document.getElementsByClassName('download-btn');
             if (buttons.length > 0) {
                 let mockEvent = { ...mockEventTemplate };
@@ -102,7 +102,7 @@
                 onClickHandler(mockEvent);
             }
         }
-        if (event.altKey && event.key === 'i') {
+        if (event.altKey && event.code === 'KeyI') {
             let buttons = document.getElementsByClassName('newtab-btn');
             if (buttons.length > 0) {
                 let mockEvent = { ...mockEventTemplate };
@@ -112,7 +112,7 @@
             }
         }
 
-        if (event.altKey && event.key === 'l') {
+        if (event.altKey && event.code === 'KeyL') {
             // right arrow
             let buttons = document.getElementsByClassName('_9zm2');
             if (buttons.length > 0) {
@@ -120,7 +120,7 @@
             }
         }
 
-        if (event.altKey && event.key === 'j') {
+        if (event.altKey && event.code === 'KeyJ') {
             // left arrow
             let buttons = document.getElementsByClassName('_9zm0');
             if (buttons.length > 0) {
