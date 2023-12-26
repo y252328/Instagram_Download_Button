@@ -460,7 +460,7 @@
                         let postUrl = `https://www.instagram.com/p/${postId}/`;
                         let resp = await fetch(postUrl);
                         let text = await resp.text();
-                        let idMatch = text.match(mediaIdPattern);
+                        let idMatch = text ? text.match(mediaIdPattern) : [];
                         let mediaId = null;
                         for (let i = 0; i < idMatch.length; ++i) {
                             if (idMatch[i]) mediaId = idMatch[i];
