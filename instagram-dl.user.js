@@ -532,6 +532,11 @@
     }
 
     function findPostName(articleNode) {
+        let imgNoCanvas = articleNode.querySelector('article section + * a[href^="/"][href$="/"]');
+        if (imgNoCanvas) {
+          return imgNoCanvas;
+        }
+        
         // videos are handled differently
         let imgAlt = articleNode.querySelector('canvas ~ * img');
         if (imgAlt) {
