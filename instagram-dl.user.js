@@ -532,6 +532,10 @@
     }
 
     function findPostName(articleNode) {
+        // this grabs the username link that is visually in the author's post comment below the media 
+        // 'article section' includes the likes section and comment box
+        // '+ * a' pulls the first element after the section that contains a link (comment box doesn't)
+        // '[href^="/"][href$="/"]' requires the href attribute to begin and end with a slash to match a username
         let imgNoCanvas = articleNode.querySelector('article section + * a[href^="/"][href$="/"]');
         if (imgNoCanvas) {
           return imgNoCanvas;
