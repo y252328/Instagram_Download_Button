@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.18
+// @version             1.17.19
 // @compatible          chrome
 // @description         Add the download button and the open button to download or open profile picture and media in the posts, stories, and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
@@ -449,11 +449,20 @@
             }
 
             async function findMediaId() {
+                // method 4
+                function method4() {
+                    let href = window.location.href;
+                    let match = document.body.innerHTML.match(/"id":"(\d+_\d+)"/);
+                    if (href.includes('stories') && match) return match[1];
+                    return null;
+                }
+
                 // method 1: extract from url.
                 function method1() {
                     let href = window.location.href;
                     let match = href.match(/www.instagram.com\/stories\/[^\/]+\/(\d+)/);
                     if (!href.includes('highlights') && match) return match[1];
+                    return null;
                 }
 
                 // method 3
@@ -493,9 +502,10 @@
                             }
                         }
                     }
+                    return null;
                 }
 
-                return method1() || await method3() || method2();
+                return method4() || method1() || await method3() || method2();
             }
 
             function getImgOrVedioUrl(item) {
@@ -528,6 +538,7 @@
                 let resp = await fetch(url, headers);
                 if (resp.status !== 200) {
                     console.log(`Fetch info API failed with status code: ${resp.status}`);
+                    console.log(`context: ${await resp.json()}`);
                     return null;
                 }
                 let respJson = await resp.json();
