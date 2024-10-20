@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.19
+// @version             1.17.20
 // @compatible          chrome
 // @description         Add the download button and the open button to download or open profile picture and media in the posts, stories, and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
@@ -448,12 +448,13 @@
                 return null;
             }
 
-            async function findMediaId() {
+            async function findMediaId(mediaIdx) {
                 // method 4
-                function method4() {
+                function method4(mediaIdx) {
                     let href = window.location.href;
-                    let match = document.body.innerHTML.match(/"id":"(\d+_\d+)"/);
-                    if (href.includes('stories') && match) return match[1];
+                    // let match = document.body.innerHTML.match(/"id":"(\d+_\d+)"/);
+                    let matchs = [...document.body.innerHTML.matchAll(/"id":"(\d+_\d+)"/g)];
+                    if (href.includes('stories') && matchs.length > mediaIdx) return matchs[mediaIdx][1];
                     return null;
                 }
 
@@ -505,7 +506,7 @@
                     return null;
                 }
 
-                return method4() || method1() || await method3() || method2();
+                return method1() || await method3() || method2();
             }
 
             function getImgOrVedioUrl(item) {
@@ -528,7 +529,7 @@
                 mode: 'cors'
             };
 
-            let mediaId = await findMediaId();
+            let mediaId = await findMediaId(mediaIdx);
             if (!mediaId) {
                 console.log("Cannot find media id");
                 return null;
