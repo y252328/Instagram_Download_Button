@@ -9,7 +9,7 @@
 // @name:hi             इंस्टाग्राम डाउनलोडर
 // @name:ru             Загрузчик Instagram
 // @namespace           https://github.com/y252328/Instagram_Download_Button
-// @version             1.17.20
+// @version             1.17.21
 // @compatible          chrome
 // @description         Add the download button and the open button to download or open profile picture and media in the posts, stories, and highlights in Instagram
 // @description:zh-TW   在Instagram頁面加入下載按鈕與開啟按鈕，透過這些按鈕可以下載或開啟大頭貼與貼文、限時動態、Highlight中的照片或影片
@@ -539,7 +539,7 @@
                 let resp = await fetch(url, headers);
                 if (resp.status !== 200) {
                     console.log(`Fetch info API failed with status code: ${resp.status}`);
-                    console.log(`context: ${await resp.json()}`);
+                    console.log(`context: ${JSON.stringify(await resp.json(), space=2)}`);
                     return null;
                 }
                 let respJson = await resp.json();
@@ -755,7 +755,7 @@
         }
         fetch(url, {
             headers: new Headers({
-                'User-Agent': window.navigator.userAgent,
+                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 105.0.0.11.118 (iPhone11,8; iOS 12_3_1; en_US; en-US; scale=2.00; 828x1792; 165586599)', //window.navigator.userAgent,
                 Origin: location.origin,
             }),
             mode: 'cors',
